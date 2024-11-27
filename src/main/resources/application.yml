@@ -1,0 +1,17 @@
+server:
+  port: 8080
+  address:
+
+spring:
+  application:
+  name: study-group
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        create_empty_composites:
+          enabled: true
+      show-sql: true
