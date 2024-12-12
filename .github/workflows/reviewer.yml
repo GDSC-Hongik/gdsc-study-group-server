@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: "20"
           cache: 'yarn'
-          cache-dependency-path: .github/workflows/random_reviewer
+          cache-dependency-path: .github/workflows/random_reviewer/yarn.lock
 
       - name: install dependencies
         working-directory: .github/workflows/random_reviewer
