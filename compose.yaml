@@ -1,0 +1,7 @@
+services:
+  server:
+    platform: linux/arm64
+    build:
+      context: .
+    ports:
+      - 8080:8080
