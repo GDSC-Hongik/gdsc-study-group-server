@@ -32,9 +32,8 @@ async function sendDiscordMsg(reviewer) {
 }
 
 function createMsg(reviewer) {
-    return "리뷰해주세요\n" + "* PR " + `https://github.com/${github.context.repo.owner}/
-    ${github.context.repo.repo}/pulls/${github.context.payload.pull_request.number}`
-        + "\n* 담당자: " + member[reviewer]
+    return "리뷰해주세요\n" + "* PR " + `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pulls/${github.context.payload.pull_request.number}`
+        + "\n* 담당자: @" + member[reviewer]
 }
 
 async function main() {
@@ -44,7 +43,7 @@ async function main() {
     githubClient.rest.pulls.requestReviewers(
         {
             owner: github.context.repo.owner,
-            repo: github.context.repo,
+            repo: github.context.repo.repo,
             pull_number: github.context.payload.pull_request.number,
             reviewers: [reviewer]
         }
