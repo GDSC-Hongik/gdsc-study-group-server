@@ -2,10 +2,10 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 
 const member= {
-    cmj7271: "open_mind_",
-    ybkang1108: "yub_in_",
-    yeeunli: "yeeun4665",
-    JungJaehoon0430: "jaehoon0430"
+    cmj7271: "740776211231277066",
+    ybkang1108: "1038826581558296636",
+    yeeunli: "1082157260249251870",
+    JungJaehoon0430: "1007395745223151726"
 }
 
 function selectRandomReviewer() {
@@ -32,8 +32,8 @@ async function sendDiscordMsg(reviewer) {
 }
 
 function createMsg(reviewer) {
-    return "리뷰해주세요\n" + "* PR " + `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pulls/${github.context.payload.pull_request.number}`
-        + "\n* 담당자: @" + member[reviewer]
+    return "리뷰해주세요\n" + "* PR: " + `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pulls/${github.context.payload.pull_request.number}`
+        + "\n* 담당자: @" + "<@&" + member[reviewer] + ">"
 }
 
 async function main() {
