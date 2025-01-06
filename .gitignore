@@ -1,5 +1,9 @@
 # source from https://github.com/GDSC-Hongik/gdsc-server/blob/develop/.gitignore
 
+erd.md
+
+**/node_modules
+
 HELP.md
 .gradle
 build/
