@@ -1,0 +1,30 @@
+name: random-reviewer
+on: [pull_request]
+
+jobs:
+  random-reviewer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: install yarn
+        run: npm install -g yarn
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: 'yarn'
+          cache-dependency-path: .github/workflows/random_reviewer/yarn.lock
+
+      - name: install dependencies
+        working-directory: .github/workflows/random_reviewer
+        run: yarn install
+
+      - name: run script
+        working-directory: .github/workflows/random_reviewer
+        run: node ./reviewer.js
+        env:
+          REVIEW_TOKEN: ${{ secrets.REVIEW_TOKEN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}

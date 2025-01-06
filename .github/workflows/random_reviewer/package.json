@@ -1,0 +1,10 @@
+{
+  "name": "random_reviewer",
+  "version": "1.0.0",
+  "main": "reviewer.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0"
+  }
+}
