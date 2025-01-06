@@ -3,9 +3,6 @@ server:
   address:
 
 spring:
-  application:
-  name: study-group
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,3 +12,4 @@ spring:
         create_empty_composites:
           enabled: true
       show-sql: true
+
