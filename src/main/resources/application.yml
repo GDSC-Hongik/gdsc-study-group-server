@@ -5,9 +5,9 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_URL}:${POSTGRESQL_PORT}/${POSTGRESQL_DB}
-    username: ${POSTGRESQL_USER}
-    password: ${POSTGRESQL_PASSWORD}
+    url: jdbc:postgresql://${POSTGRES_URL}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
   jpa:
     hibernate:
@@ -15,7 +15,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        create_empty_composites:
-          enabled: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
       show-sql: true
 
