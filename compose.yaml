@@ -21,5 +21,16 @@ services:
     volumes:
       - data:/data/db
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "8088:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=gdgoc@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=0000
+    depends_on:
+      - db
+
 volumes:
   data:
