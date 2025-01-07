@@ -17,11 +17,11 @@ function selectRandomReviewer() {
         ]
 }
 
-async function sendDiscordMsg(reviewer) {
+async function sendDiscordMsg(reviewer, title) {
     const webhook = process.env.DISCORD_WEBHOOK;
 
     const msg = {
-        content: createMsg(reviewer)
+        content: createMsg(reviewer, title)
     }
 
     await fetch(webhook, {
@@ -31,14 +31,24 @@ async function sendDiscordMsg(reviewer) {
     })
 }
 
-function createMsg(reviewer) {
-    return "리뷰해주세요\n" + "* PR: " + `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pulls/${github.context.payload.pull_request.number}`
-        + "\n* 담당자: @" + "<@&" + member[reviewer] + ">"
+function createMsg(reviewer, title) {
+    return title + "\n" + "* PR: " + `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pulls/${github.context.payload.pull_request.number}`
+        + "\n* 담당자: " + "<@!" + member[reviewer] + ">"
 }
 
 async function main() {
     const githubClient = github.getOctokit(process.env.REVIEW_TOKEN);
     const reviewer = selectRandomReviewer();
+
+    const { owner, repo } = github.context.repo;
+
+    const pr = await githubClient.rest.pulls.get(
+        {
+            owner: owner,
+            repo: repo,
+            pull_number: github.context.payload.pull_request.number
+        }
+    )
 
     githubClient.rest.pulls.requestReviewers(
         {
@@ -51,7 +61,7 @@ async function main() {
         .then((res) => console.log("reviewer assign success: ", res))
         .catch((err) => console.log("reviewer assign failed:", err));
 
-    sendDiscordMsg(reviewer)
+    sendDiscordMsg(reviewer, pr.data.title)
         .then(() => console.log("message send success"))
         .catch(() => console.log("message send failed"));
 }
