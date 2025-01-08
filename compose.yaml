@@ -3,6 +3,8 @@ services:
     env_file:
       - ./env/server.env
       - ./env/db.env
+    environment:
+      - NO_GIT_HOOKS="true"
     platform: linux/arm64
     build:
       context: .
