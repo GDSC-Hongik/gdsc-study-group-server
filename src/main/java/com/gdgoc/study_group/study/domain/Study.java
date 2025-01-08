@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,19 +20,19 @@ public class Study {
   private Long id;
 
   @OneToMany(mappedBy = "study_member_id")
-  private List<StudyMember> studyMembers;
+  private List<StudyMember> studyMembers = new ArrayList<>();
 
   @OneToMany(mappedBy = "round_id")
-  private List<Round> rounds;
+  private List<Round> rounds = new ArrayList<>();
 
   @OneToMany(mappedBy = "curriculum_id")
-  private List<Curriculum> curriculums;
+  private List<Curriculum> curriculums = new ArrayList<>();
 
   @OneToMany(mappedBy = "day_id")
-  private List<Day> days;
+  private List<Day> days = new ArrayList<>();
 
   @OneToMany(mappedBy = "answer_id")
-  private List<Answer> answers;
+  private List<Answer> answers = new ArrayList<>();
 
   private String name;
   private String description;

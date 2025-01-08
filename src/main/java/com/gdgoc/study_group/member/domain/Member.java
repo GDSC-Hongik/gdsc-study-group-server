@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class Member {
   private Long id;
 
   @OneToMany(mappedBy = "member")
-  private List<StudyMember> studyMembers;
+  private List<StudyMember> studyMembers = new ArrayList<>();
 
   private String name;
   private String github;
