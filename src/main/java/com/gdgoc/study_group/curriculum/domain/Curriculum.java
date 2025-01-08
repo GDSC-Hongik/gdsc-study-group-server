@@ -17,4 +17,7 @@ public class Curriculum {
   @ManyToOne
   @JoinColumn(name = "study_id", nullable = false)
   private Study study;
+
+  private Integer week;
+  private String subject; // 해당 회차의 주제
 }
