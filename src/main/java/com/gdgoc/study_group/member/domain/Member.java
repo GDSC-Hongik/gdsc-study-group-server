@@ -1,5 +1,6 @@
 package com.gdgoc.study_group.member.domain;
 
+import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,9 @@ public class Member {
 
   @OneToMany(mappedBy = "member")
   private List<StudyMember> studyMembers = new ArrayList<>();
+
+  @OneToMany(mappedBy = "member")
+  private List<RoundMember> roundMembers = new ArrayList<>();
 
   private String name;
   private String github;
