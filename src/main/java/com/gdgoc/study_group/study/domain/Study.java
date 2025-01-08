@@ -19,19 +19,19 @@ public class Study {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToMany(mappedBy = "study_member_id")
+  @OneToMany(mappedBy = "study")
   private List<StudyMember> studyMembers = new ArrayList<>();
 
-  @OneToMany(mappedBy = "round_id")
+  @OneToMany(mappedBy = "study")
   private List<Round> rounds = new ArrayList<>();
 
-  @OneToMany(mappedBy = "curriculum_id")
+  @OneToMany(mappedBy = "study")
   private List<Curriculum> curriculums = new ArrayList<>();
 
-  @OneToMany(mappedBy = "day_id")
+  @OneToMany(mappedBy = "study")
   private List<Day> days = new ArrayList<>();
 
-  @OneToMany(mappedBy = "answer_id")
+  @OneToMany(mappedBy = "study")
   private List<Answer> answers = new ArrayList<>();
 
   private String name;
