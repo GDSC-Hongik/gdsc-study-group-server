@@ -5,7 +5,7 @@ const member= {
     cmj7271: "740776211231277066",
     ybkang1108: "1038826581558296636",
     yeeunli: "1082157260249251870",
-    JungJaehoon0430: "1007395745223151726"
+    JaehoonJung0430: "1007395745223151726"
 }
 
 function selectRandomReviewer() {
