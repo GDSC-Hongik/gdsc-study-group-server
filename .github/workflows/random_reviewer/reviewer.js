@@ -52,18 +52,26 @@ async function main() {
     if(requested_reviewers.data.users.length === 0) {
         githubClient.rest.pulls.requestReviewers(
             {
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                pull_number: github.context.payload.pull_request.number,
+                ...pr_info,
                 reviewers: [reviewer]
             }
         )
             .then((res) => console.log("reviewer assign success: ", res))
-            .catch((err) => console.log("reviewer assign failed:", err));
-    }
+            .catch((err) => {
+                console.log("reviewer assign failed:", err);
+                process.exit(1);
+            });
+    } else {console.log("already assigned reviewer exist.")}
+
     sendDiscordMsg(reviewer, pr.data.title)
         .then(() => console.log("message send success"))
-        .catch(() => console.log("message send failed"));
+        .catch(() => {
+            console.log("message send failed");
+            process.exit(1);
+        });
 }
 
-main().then(() => console.log("success")).catch(() => console.log("failed"));
+main().then(() => console.log("success")).catch(() => {
+    console.log("failed")
+    process.exit(1);
+});
