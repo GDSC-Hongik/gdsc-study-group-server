@@ -38,7 +38,7 @@ function createMsg(reviewer, title) {
 
 async function main() {
     const githubClient = github.getOctokit(process.env.REVIEW_TOKEN);
-    const reviewer = selectRandomReviewer();
+    let reviewer = "";
 
     const { owner, repo } = github.context.repo;
     const pr_info = {
@@ -61,7 +61,11 @@ async function main() {
                 console.log("reviewer assign failed:", err);
                 process.exit(1);
             });
-    } else {console.log("already assigned reviewer exist.")}
+        reviewer = selectRandomReviewer();
+    } else {
+        console.log("already assigned reviewer exist.")
+        reviewer = requested_reviewers.data.users[0].login;
+    }
 
     const pr = await githubClient.rest.pulls.get(
         {
