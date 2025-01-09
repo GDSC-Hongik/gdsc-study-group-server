@@ -63,6 +63,14 @@ async function main() {
             });
     } else {console.log("already assigned reviewer exist.")}
 
+    const pr = await githubClient.rest.pulls.get(
+        {
+            owner: owner,
+            repo: repo,
+            pull_number: github.context.payload.pull_request.number
+        }
+    )
+
     sendDiscordMsg(reviewer, pr.data.title)
         .then(() => console.log("message send success"))
         .catch(() => {
