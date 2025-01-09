@@ -41,26 +41,26 @@ async function main() {
     const reviewer = selectRandomReviewer();
 
     const { owner, repo } = github.context.repo;
+    const pr_info = {
+        owner: owner,
+        repo: repo,
+        pull_number: github.context.payload.pull_request.number
+    }
 
-    const pr = await githubClient.rest.pulls.get(
-        {
-            owner: owner,
-            repo: repo,
-            pull_number: github.context.payload.pull_request.number
-        }
-    )
+    const requested_reviewers = await githubClient.rest.pulls.listRequestedReviewers(pr_info)
 
-    githubClient.rest.pulls.requestReviewers(
-        {
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            pull_number: github.context.payload.pull_request.number,
-            reviewers: [reviewer]
-        }
-    )
-        .then((res) => console.log("reviewer assign success: ", res))
-        .catch((err) => console.log("reviewer assign failed:", err));
-
+    if(requested_reviewers.data.users.length === 0) {
+        githubClient.rest.pulls.requestReviewers(
+            {
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                pull_number: github.context.payload.pull_request.number,
+                reviewers: [reviewer]
+            }
+        )
+            .then((res) => console.log("reviewer assign success: ", res))
+            .catch((err) => console.log("reviewer assign failed:", err));
+    }
     sendDiscordMsg(reviewer, pr.data.title)
         .then(() => console.log("message send success"))
         .catch(() => console.log("message send failed"));
