@@ -1,7 +1,36 @@
 services:
   server:
+    env_file:
+      - ./env/server.env
+      - ./env/db.env
     platform: linux/arm64
     build:
       context: .
     ports:
-      - 8080:8080
+      - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    env_file:
+      - ./env/db.env
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/data/db
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "8088:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=gdgoc@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=0000
+    depends_on:
+      - db
+
+volumes:
+  data:
