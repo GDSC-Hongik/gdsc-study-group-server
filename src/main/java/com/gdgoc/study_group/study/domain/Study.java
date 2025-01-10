@@ -40,6 +40,5 @@ public class Study {
   private String question; // 지원 질문, nullable: 지원 답변 없이 바로 신청 가능
   private boolean isOffline;
   private boolean isActive;
-  private Integer participants; // 현재 스터디 참여 인원
   private Integer maxParticipants; // null == 인원 제한 X
 }
