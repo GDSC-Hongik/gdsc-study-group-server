@@ -5,7 +5,7 @@ const member= {
     cmj7271: "740776211231277066",
     ybkang1108: "1038826581558296636",
     yeeunli: "1082157260249251870",
-    JungJaehoon0430: "1007395745223151726"
+    JaehoonJung0430: "1007395745223151726"
 }
 
 function selectRandomReviewer() {
@@ -38,9 +38,34 @@ function createMsg(reviewer, title) {
 
 async function main() {
     const githubClient = github.getOctokit(process.env.REVIEW_TOKEN);
-    const reviewer = selectRandomReviewer();
+    let reviewer = "";
 
     const { owner, repo } = github.context.repo;
+    const pr_info = {
+        owner: owner,
+        repo: repo,
+        pull_number: github.context.payload.pull_request.number
+    }
+
+    const requested_reviewers = await githubClient.rest.pulls.listRequestedReviewers(pr_info)
+
+    if(requested_reviewers.data.users.length === 0) {
+        githubClient.rest.pulls.requestReviewers(
+            {
+                ...pr_info,
+                reviewers: [reviewer]
+            }
+        )
+            .then((res) => console.log("reviewer assign success: ", res))
+            .catch((err) => {
+                console.log("reviewer assign failed:", err);
+                process.exit(1);
+            });
+        reviewer = selectRandomReviewer();
+    } else {
+        console.log("already assigned reviewer exist.")
+        reviewer = requested_reviewers.data.users[0].login;
+    }
 
     const pr = await githubClient.rest.pulls.get(
         {
@@ -50,20 +75,15 @@ async function main() {
         }
     )
 
-    githubClient.rest.pulls.requestReviewers(
-        {
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            pull_number: github.context.payload.pull_request.number,
-            reviewers: [reviewer]
-        }
-    )
-        .then((res) => console.log("reviewer assign success: ", res))
-        .catch((err) => console.log("reviewer assign failed:", err));
-
     sendDiscordMsg(reviewer, pr.data.title)
         .then(() => console.log("message send success"))
-        .catch(() => console.log("message send failed"));
+        .catch(() => {
+            console.log("message send failed");
+            process.exit(1);
+        });
 }
 
-main().then(() => console.log("success")).catch(() => console.log("failed"));
+main().then(() => console.log("success")).catch(() => {
+    console.log("failed")
+    process.exit(1);
+});
