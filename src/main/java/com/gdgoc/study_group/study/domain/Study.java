@@ -36,6 +36,7 @@ public class Study {
 
   private String name;
   private String description;
+  private String requirement; // 지원 자격, nullable: 별도 요구 자격 없음
   private String question; // 지원 질문, nullable: 지원 답변 없이 바로 신청 가능
   private boolean isOffline;
   private boolean isActive;
