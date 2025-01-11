@@ -1,11 +1,11 @@
 package com.gdgoc.study_group.study.controller;
 
 import com.gdgoc.study_group.study.domain.Study;
-import com.gdgoc.study_group.study.dto.StudyDTO;
+import com.gdgoc.study_group.study.dto.StudyCreateRequestDTO;
+import com.gdgoc.study_group.study.dto.StudyCreateResponseDTO;
+import com.gdgoc.study_group.study.dto.StudyListResponseDTO;
 import com.gdgoc.study_group.study.service.StudyService;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,22 +18,21 @@ public class StudyController {
   @Autowired private StudyService studyService;
 
   @PostMapping
-  public ResponseEntity<Map<String, Object>> createStudy(@RequestBody StudyDTO studyDTO) {
+  public ResponseEntity<StudyCreateResponseDTO> createStudy(
+      @RequestBody StudyCreateRequestDTO studyCreateRequestDTO) {
 
-    Study newStudy = studyService.createStudy(studyDTO);
+    Study newStudy = studyService.createStudy(studyCreateRequestDTO);
+    StudyCreateResponseDTO studyCreateResponseDTO =
+        new StudyCreateResponseDTO("스터디 생성 성공", newStudy.getId());
 
-    Map<String, Object> response = new LinkedHashMap<>();
-    response.put("message", "스터디 생성 성공");
-    response.put("study_id", newStudy.getId());
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    return ResponseEntity.status(HttpStatus.CREATED).body(studyCreateResponseDTO);
   }
 
   @GetMapping
-  public ResponseEntity<List<Study>> getStudy() {
+  public ResponseEntity<List<StudyListResponseDTO>> getStudyList() {
 
-    List<Study> studies = studyService.getAllStudies();
+    List<StudyListResponseDTO> studyList = studyService.getStudyList();
 
-    return ResponseEntity.status(HttpStatus.OK).body(studies);
+    return ResponseEntity.status(HttpStatus.OK).body(studyList);
   }
 }
