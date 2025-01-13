@@ -1,4 +1,4 @@
-package com.gdgoc.study_group.day.domain;
+package com.gdgoc.study_group.day.dao;
 
 import com.gdgoc.study_group.study.domain.Study;
 import jakarta.persistence.Entity;

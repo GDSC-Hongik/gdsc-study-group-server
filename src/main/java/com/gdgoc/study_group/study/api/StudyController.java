@@ -3,6 +3,7 @@ package com.gdgoc.study_group.study.controller;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.StudyCreateRequestDTO;
 import com.gdgoc.study_group.study.dto.StudyCreateResponseDTO;
+import com.gdgoc.study_group.study.dto.StudyDetailResponseDTO;
 import com.gdgoc.study_group.study.dto.StudyListResponseDTO;
 import com.gdgoc.study_group.study.service.StudyService;
 import java.util.List;
@@ -34,5 +35,14 @@ public class StudyController {
     List<StudyListResponseDTO> studyList = studyService.getStudyList();
 
     return ResponseEntity.status(HttpStatus.OK).body(studyList);
+  }
+
+  @GetMapping("/{study_id}")
+  public ResponseEntity<StudyDetailResponseDTO> getStudyDetail(
+      @PathVariable("study_id") Long studyId) {
+
+    StudyDetailResponseDTO studyDetailResponseDTO = studyService.getStudyDetail(studyId);
+
+    return ResponseEntity.status(HttpStatus.OK).body(studyDetailResponseDTO);
   }
 }

@@ -1,10 +1,11 @@
 package com.gdgoc.study_group.study.service;
 
+import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Status;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.StudyCreateRequestDTO;
+import com.gdgoc.study_group.study.dto.StudyDetailResponseDTO;
 import com.gdgoc.study_group.study.dto.StudyListResponseDTO;
-import com.gdgoc.study_group.study.repository.StudyRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class StudyService {
     return studyRepository.save(study);
   }
 
-  // 전체 스터디 목록을 가져옴
+  // 스터디 전체 목록 조회
   public List<StudyListResponseDTO> getStudyList() {
     List<Study> studyList = studyRepository.findAll();
 
@@ -53,5 +54,20 @@ public class StudyService {
     }
 
     return studyListResponseDTOList;
+  }
+
+  // 스터디 상세 조회
+  public StudyDetailResponseDTO getStudyDetail(Long studyId) {
+    Study study = studyRepository.findById(studyId).orElse(null);
+    StudyDetailResponseDTO studyDetailResponseDTO = new StudyDetailResponseDTO();
+
+    if (study != null) { // 스터디가 존재하는 경우에만 DTO 설정
+      studyDetailResponseDTO.setId(study.getId());
+      studyDetailResponseDTO.setName(study.getName());
+      studyDetailResponseDTO.setDescription(study.getDescription());
+      studyDetailResponseDTO.setParticipants(study.getStudyMembers().size());
+    }
+
+    return studyDetailResponseDTO;
   }
 }
