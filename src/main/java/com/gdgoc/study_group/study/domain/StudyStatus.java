@@ -1,6 +1,6 @@
 package com.gdgoc.study_group.study.domain;
 
-public enum Status {
+public enum StudyStatus {
   OFFLINE,
   ONLINE,
   FINISHED

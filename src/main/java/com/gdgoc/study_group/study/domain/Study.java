@@ -37,7 +37,7 @@ public class Study {
   private List<Answer> answers = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private StudyStatus studyStatus;
 
   private String name;
   private String description;
