@@ -1,4 +1,4 @@
-package com.gdgoc.study_group.comment.dao;
+package com.gdgoc.study_group.comment.domain;
 
 import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
