@@ -19,7 +19,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      */
     @Query(value = "select c from Comment c " +
             "where c.round.id = :roundId")
-    List<Comment> findAllComments(@Param("roundId") Long roundId);
+    List<Comment> findCommentsByRound(@Param("roundId") Long roundId);
 
 
     /**
@@ -30,5 +30,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      */
     @Query(value = "select c from Comment c " +
             "where c.member.id = :memberid")
-    List<Comment> findCommentByMemberId(@Param("memberId") Long memberId);
+    List<Comment> findCommentsByMember(@Param("memberId") Long memberId);
 }
