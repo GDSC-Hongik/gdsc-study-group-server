@@ -38,4 +38,5 @@ public class Study {
   private String requirement; // 지원 자격, nullable: 별도 요구 자격 없음
   private String question; // 지원 질문, nullable: 지원 답변 없이 바로 신청 가능
   private Integer maxParticipants; // null == 인원 제한 X
+  private Boolean isApplicationClosed = false; // 멤버 지원 종료 여부(기본값은 지원 가능)
 }
