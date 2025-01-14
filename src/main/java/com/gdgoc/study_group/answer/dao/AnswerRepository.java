@@ -39,5 +39,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
    */
   @Query(value = "select a from Answer a " +
           "where a.member.id = :memberId")
-  List<Answer> findByMemberId(@Param("memberId") Long memberId);
+  List<Answer> findByMemberId(@Param("memberId") Long memberId)
 }

@@ -59,3 +59,19 @@ spotless {
 		endWithNewline()
 	}
 }
+
+tasks.register("updateGitHooks", Copy) {
+	from "./scripts/pre-commit"
+	into ".git/hooks"
+	onlyIf {
+		System.getenv("NO_GIT_HOOKS") == "true"
+	}
+}
+tasks.register("executableGitHooks", Exec) {
+	commandLine "chmod", "ug+x", ".git/hooks/pre-commit"
+	dependsOn(updateGitHooks)
+	onlyIf {
+		System.getenv("NO_GIT_HOOKS") == "true"
+	}
+}
+compileJava.dependsOn(executableGitHooks)

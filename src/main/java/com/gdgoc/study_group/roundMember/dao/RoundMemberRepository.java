@@ -1,4 +1,4 @@
-package com.gdgoc.study_group.roundMember.repository;
+package com.gdgoc.study_group.roundMember.dao;
 
 import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import org.springframework.data.jpa.repository.JpaRepository;
