@@ -4,6 +4,7 @@ import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +25,19 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
           + " sm.studyMemberStatus = :memberStatus")
   List<Study> findByMemberIdAndStatus(
       @Param("id") Long memberId, @Param("memberStatus") StudyMemberStatus memberStatus);
+
+  /**
+   * 해당 멤버의 스터디에서의 상태를 조회합니다.
+   *
+   * @param memberId 검색할 멤버의 id
+   * @param studyId 검색할 스터디의 id
+   * @return 해당 스터디에서 멤버의 상태(Optional)
+   */
+  @Query(
+      "SELECT sm.studyMemberStatus FROM StudyMember sm WHERE sm.member.id = :memberId AND"
+          + " sm.study.id = :studyId")
+  Optional<StudyMemberStatus> findMemberStatus(
+      @Param("memberId") Long memberId, @Param("studyId") Long studyId);
 
   Member findByGithub(String github);
 }
