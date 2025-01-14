@@ -8,14 +8,8 @@ import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
 public class Study {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
