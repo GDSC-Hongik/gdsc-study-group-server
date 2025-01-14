@@ -1,4 +1,4 @@
-package com.gdgoc.study_group.round.repository;
+package com.gdgoc.study_group.round.dao;
 
 import com.gdgoc.study_group.round.domain.Round;
 import org.springframework.data.jpa.repository.JpaRepository;

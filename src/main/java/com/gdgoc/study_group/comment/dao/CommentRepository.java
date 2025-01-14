@@ -1,6 +1,6 @@
-package com.gdgoc.study_group.comment.repository;
+package com.gdgoc.study_group.comment.dao;
 
-import com.gdgoc.study_group.comment.dao.Comment;
+import com.gdgoc.study_group.comment.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

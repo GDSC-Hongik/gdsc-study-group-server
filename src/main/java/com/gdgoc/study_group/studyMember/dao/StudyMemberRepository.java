@@ -1,4 +1,4 @@
-package com.gdgoc.study_group.studyMember.repository;
+package com.gdgoc.study_group.studyMember.dao;
 
 import com.gdgoc.study_group.studyMember.domain.Status;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
