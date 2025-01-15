@@ -7,15 +7,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Getter
 public class Member {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
