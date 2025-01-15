@@ -7,8 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Curriculum {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -28,5 +28,5 @@ public class StudyMember {
   private Study study;
 
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private StudyMemberStatus studyMemberStatus;
 }
