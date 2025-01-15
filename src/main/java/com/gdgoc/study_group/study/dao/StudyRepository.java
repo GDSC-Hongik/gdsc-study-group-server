@@ -2,6 +2,7 @@ package com.gdgoc.study_group.study.dao;
 
 import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.curriculum.domain.Curriculum;
+import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.domain.StudyStatus;
 import java.util.List;
@@ -12,6 +13,24 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudyRepository extends JpaRepository<Study, Long> {
+  // ================ STUDY ================ //
+  /**
+   * 해당하는 스터디 상태를 가진 모든 스터디를 조회합니다
+   *
+   * @param studyStatus 조회를 원하는 스터디의 상태
+   * @return 해당 상태를 가진 스터디 List
+   */
+  List<Study> findByStudyStatus(StudyStatus studyStatus);
+
+  /**
+   * 모집 중인 스터디 목록 조회
+   *
+   * @return 모집 중인 스터디 List
+   */
+  @Query("SELECT s FROM Study s WHERE s.isApplicationClosed = false")
+  List<Study> findRecruitingStudy();
+
+  //  ================ CURRICULUM ================ //
   /**
    * 스터디의 모든 커리큘럼을 조회합니다
    *
@@ -31,6 +50,17 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
   @Query("select c from Curriculum c where" + " c.study.id = :studyId AND" + " c.week = :week")
   Curriculum findCurriculumByWeek(@Param("studyId") Long studyId, @Param("week") Integer week);
 
+  // ================ DAY ================ //
+  /**
+   * 해당 스터디의 날짜 정보를 조회합니다
+   *
+   * @param studyId 조회할 스터디의 Id
+   * @return 해당 스터디의 주간 일정을 {@code List<Day> } 형식으로 반환
+   */
+  @Query(value = "select d from Day d where d.study.id = :studyId")
+  List<Day> getStudyDay(@Param("studyId") Long studyId);
+
+  // ================ ANSWER ================ //
   /**
    * 해당 스터디의 모든 답변을 조회합니다
    *
@@ -39,20 +69,4 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
    */
   @Query("SELECT a FROM Answer a WHERE a.study.id = :studyId")
   List<Answer> findAnswers(@Param("studyId") Long studyId);
-
-  /**
-   * 해당하는 스터디 상태를 가진 모든 스터디를 조회합니다
-   *
-   * @param studyStatus 조회를 원하는 스터디의 상태
-   * @return 해당 상태를 가진 스터디 List
-   */
-  List<Study> findByStudyStatus(StudyStatus studyStatus);
-
-  /**
-   * 모집 중인 스터디 목록 조회
-   *
-   * @return 모집 중인 스터디 List
-   */
-  @Query("SELECT s FROM Study s WHERE s.isApplicationClosed = false")
-  List<Study> findRecruitingStudy();
 }
