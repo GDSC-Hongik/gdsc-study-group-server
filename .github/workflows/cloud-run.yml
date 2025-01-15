@@ -46,6 +46,7 @@ env:
   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  SERVER_PORT: ${{ secrets.SERVER_PORT }}
 
 jobs:
   deploy:
@@ -82,7 +83,13 @@ jobs:
       - name: 'Build and Push Container'
         run: |-
           DOCKER_TAG="$${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
-          docker build --tag "${DOCKER_TAG}" .
+          docker build \
+          --build-arg SERVER_PORT=${{ env.SERVER_PORT }} \
+          --build-arg POSTEGRES_DB=${{ env.POSTGRES_DB }} \
+          --build-arg POSTEGRES_URL=${{ env.POSTGRES_URL }} \
+          --build-arg POSTGRES_USER=${{ env.POSTGRES_USER }} \
+          --build-arg POSTGRES_PASSWORD=${{ env.POSTGRES_PASSWORD }} \
+          --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
 
