@@ -35,10 +35,17 @@ on:
       - '"main"'
 
 env:
-  PROJECT_ID: 'gdgoc-hongik' # TODO: update to your Google Cloud project ID
-  REGION: 'asia-northeast3' # TODO: update to your region
-  SERVICE: 'gdsc-study-group-server' # TODO: update to your service name
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/670309340241/locations/global/workloadIdentityPools/github/providers/study-group-oidc' # TODO: update to your workload identity provider
+  # cloud run env
+  PROJECT_ID: ${{ secrets.CLOUD_PROJECT_ID }} # TODO: update to your Google Cloud project ID
+  REGION: ${{ secrets.CLOUD_REGION }} # TODO: update to your region
+  SERVICE: ${{ secrets.CLOUD_SERVICE }} # TODO: update to your service name
+  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.CLOUD.WORKLOAD_IDENTITY_PROVIDER }} # TODO: update to your workload identity provider
+  # backend env
+  POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+  POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
 jobs:
   deploy:
