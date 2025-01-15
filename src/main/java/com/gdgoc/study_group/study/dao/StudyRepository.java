@@ -37,7 +37,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
    * @param studyId 스터디 아이디
    * @return 커리큘럼 List
    */
-  @Query(value = "select c from Curriculum c where c.study.id = :studyId")
+  @Query(value = "SELECT c FROM Curriculum c WHERE c.study.id = :studyId")
   List<Curriculum> findCurriculums(@Param("studyId") Long studyId);
 
   /**
@@ -47,7 +47,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
    * @param week 조회할 회차
    * @return 해당 회차의 Curriculum
    */
-  @Query("select c from Curriculum c where" + " c.study.id = :studyId AND" + " c.week = :week")
+  @Query("SELECT c FROM Curriculum c WHERE" + " c.study.id = :studyId AND" + " c.week = :week")
   Curriculum findCurriculumByWeek(@Param("studyId") Long studyId, @Param("week") Integer week);
 
   // ================ DAY ================ //
@@ -57,7 +57,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
    * @param studyId 조회할 스터디의 Id
    * @return 해당 스터디의 주간 일정을 {@code List<Day> } 형식으로 반환
    */
-  @Query(value = "select d from Day d where d.study.id = :studyId")
+  @Query(value = "SELECT d FROM Day d WHERE d.study.id = :studyId")
   List<Day> getStudyDay(@Param("studyId") Long studyId);
 
   // ================ ANSWER ================ //

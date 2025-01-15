@@ -18,7 +18,7 @@ public interface RoundRepository extends JpaRepository<Round, Long> {
    * @param roundId 라운드 아이디
    * @return 해당 라운드의 모든 댓글 리스트
    */
-  @Query("select c from Comment c where c.round.id = :roundId")
+  @Query("SELECT c FROM Comment c WHERE c.round.id = :roundId")
   List<Comment> findComments(@Param("roundId") Long roundId);
 
   @Query("SELECT c FROM Comment c WHERE c.round.id = :roundId AND" + " c.member.id = :memberId")
