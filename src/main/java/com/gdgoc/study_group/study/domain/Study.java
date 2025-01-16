@@ -8,8 +8,13 @@ import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 @Entity
+@Builder
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class Study {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +26,10 @@ public class Study {
   @OneToMany(mappedBy = "study")
   private List<Round> rounds = new ArrayList<>();
 
-  @OneToMany(mappedBy = "study")
+  @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Curriculum> curriculums = new ArrayList<>();
 
-  @OneToMany(mappedBy = "study")
+  @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Day> days = new ArrayList<>();
 
   @OneToMany(mappedBy = "study")
