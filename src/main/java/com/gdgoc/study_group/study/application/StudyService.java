@@ -6,15 +6,13 @@ import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.day.dto.DayDTO;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
-import com.gdgoc.study_group.study.dto.StudyCreateRequest;
-import com.gdgoc.study_group.study.dto.StudyCreateResponse;
-import com.gdgoc.study_group.study.dto.StudyDetailResponse;
-import com.gdgoc.study_group.study.dto.StudyListResponse;
+import com.gdgoc.study_group.study.dto.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
+/** 예외처리 + 권한 확인 아직 안 함.... 빨리 하겠슴다 */
 @Service
 public class StudyService {
 
@@ -24,9 +22,14 @@ public class StudyService {
     this.studyRepository = studyRepository;
   }
 
+  /**
+   * 스터디를 생성합니다.
+   *
+   * @param createRequest 스터디 생성 DTO
+   * @return ResponseDTO 반환
+   */
   public StudyCreateResponse createStudy(StudyCreateRequest createRequest) {
 
-    // 스터디 생성
     Study study =
         Study.builder()
             .name(createRequest.getName())
@@ -66,10 +69,14 @@ public class StudyService {
 
     studyRepository.save(study);
 
-    return StudyCreateResponse.builder().message("Study Created").id(study.getId()).build();
+    return StudyCreateResponse.builder().message("스터디가 생성되었습니다").id(study.getId()).build();
   }
 
-  // 스터디 전체 목록 조회
+  /**
+   * 스터디 전체 목록을 조회합니다.
+   *
+   * @return 스터디 전체 목록 리스트
+   */
   public List<StudyListResponse> getStudyList() {
     List<Study> studyList = studyRepository.findAll();
     List<StudyListResponse> listResponse = new ArrayList<>();
@@ -88,7 +95,12 @@ public class StudyService {
     return listResponse;
   }
 
-  // 스터디 상세 정보 조회
+  /**
+   * 스터디 상세 정보를 조회합니다.
+   *
+   * @param studyId 조회할 스터디 아이디
+   * @return 스터디 정보 반환
+   */
   public StudyDetailResponse getStudyDetail(Long studyId) {
     Optional<Study> study = studyRepository.findById(studyId);
 
@@ -118,7 +130,7 @@ public class StudyService {
         }
       }
 
-      // day가 있다면 dayDTO로 변환해 responsedp cnrk
+      // day가 있다면 dayDTO로 변환해 response에 추가
       if (study.get().getDays() != null) {
         for (Day day : study.get().getDays()) {
           DayDTO dayDTO = DayDTO.builder().day(day.getDay()).startTime(day.getStartTime()).build();
@@ -129,5 +141,22 @@ public class StudyService {
       return detailResponse;
     }
     return null;
+  }
+
+  /**
+   * 스터디장 권한 확인 필요 스터디를 삭제합니다
+   *
+   * @param studyId 삭제할 스터디의 아이디
+   * @return 삭제 완료 메시지를 담은 MessageResponse DTO
+   */
+  public MessageResponse deleteStudy(Long studyId) {
+    Optional<Study> study = studyRepository.findById(studyId);
+
+    if (study.isEmpty()) {
+      return null;
+    }
+
+    studyRepository.deleteById(studyId);
+    return MessageResponse.builder().message("스터디가 삭제되었습니다.").build();
   }
 }
