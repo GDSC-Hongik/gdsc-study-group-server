@@ -8,7 +8,9 @@ import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.StudyCreateRequest;
 import com.gdgoc.study_group.study.dto.StudyCreateResponse;
+import com.gdgoc.study_group.study.dto.StudyListResponse;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -62,35 +64,24 @@ public class StudyService {
 
     studyRepository.save(study);
 
-    // response DTO 생성
-    StudyCreateResponse response =
-        StudyCreateResponse.builder()
-            .id(study.getId())
-            .name(study.getName())
-            .description(study.getDescription())
-            .requirement(study.getRequirement())
-            .maxParticipants(study.getMaxParticipants())
-            .studyStatus(study.getStudyStatus())
-            .curriculums(new ArrayList<>())
-            .days(new ArrayList<>())
-            .build();
+    return StudyCreateResponse.builder().message("Study Created").id(study.getId()).build();
+  }
 
-    // response에 curriculum DTO 추가
-    for (Curriculum curriculum : study.getCurriculums()) {
-      CurriculumDTO curriculumDTO =
-          CurriculumDTO.builder()
-              .week(curriculum.getWeek())
-              .subject(curriculum.getSubject())
+  public List<StudyListResponse> getStudyList() {
+    List<Study> studyList = studyRepository.findAll();
+    List<StudyListResponse> studyListResponses = new ArrayList<>();
+
+    for (Study study : studyList) {
+      StudyListResponse studyResponse =
+          StudyListResponse.builder()
+              .id(study.getId())
+              .name(study.getName())
+              .description(study.getDescription())
+              .status(study.getStudyStatus())
               .build();
-      response.getCurriculums().add(curriculumDTO);
+      studyListResponses.add(studyResponse);
     }
 
-    // response에 day DTO 추가
-    for (Day day : study.getDays()) {
-      DayDTO dayDTO = DayDTO.builder().day(day.getDay()).startTime(day.getStartTime()).build();
-      response.getDays().add(dayDTO);
-    }
-
-    return response;
+    return studyListResponses;
   }
 }
