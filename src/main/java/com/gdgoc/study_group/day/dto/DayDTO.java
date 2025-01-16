@@ -10,6 +10,6 @@ import lombok.Getter;
 public class DayDTO {
   private String day;
 
-  @JsonFormat(pattern = "hh:mm") // "startTime": "14:00" 형식으로 입력
+  @JsonFormat(pattern = "HH:mm") // "startTime": "14:00" 형식으로 입력
   private LocalTime startTime;
 }

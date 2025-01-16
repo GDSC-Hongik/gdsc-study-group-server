@@ -1,8 +1,8 @@
 package com.gdgoc.study_group.study.api;
 
 import com.gdgoc.study_group.study.application.StudyService;
-import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.StudyCreateRequest;
+import com.gdgoc.study_group.study.dto.StudyCreateResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +20,8 @@ public class StudyController {
   }
 
   @PostMapping()
-  public ResponseEntity<Study> createStudy(@RequestBody StudyCreateRequest request) {
-    Study newStudy = studyService.createStudy(request);
+  public ResponseEntity<StudyCreateResponse> createStudy(@RequestBody StudyCreateRequest request) {
+    StudyCreateResponse newStudy = studyService.createStudy(request);
 
     return ResponseEntity.ok(newStudy);
   }

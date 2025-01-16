@@ -27,6 +27,6 @@ public class Day {
 
   private String day;
 
-  @JsonFormat(pattern = "kk:mm")
+  @JsonFormat(pattern = "HH:mm")
   private LocalTime startTime;
 }
