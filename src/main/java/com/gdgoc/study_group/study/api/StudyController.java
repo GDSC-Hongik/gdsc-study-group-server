@@ -3,6 +3,7 @@ package com.gdgoc.study_group.study.api;
 import com.gdgoc.study_group.study.application.StudyService;
 import com.gdgoc.study_group.study.dto.StudyCreateRequest;
 import com.gdgoc.study_group.study.dto.StudyCreateResponse;
+import com.gdgoc.study_group.study.dto.StudyDetailResponse;
 import com.gdgoc.study_group.study.dto.StudyListResponse;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,14 @@ public class StudyController {
     return ResponseEntity.ok(studyList);
   }
 
+  @GetMapping("/{studyId}")
+  public ResponseEntity<StudyDetailResponse> getStudyDetail(@PathVariable("studyId") Long studyId) {
+    StudyDetailResponse studyDetail = studyService.getStudyDetail(studyId);
 
+    if (studyDetail == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(studyDetail);
+  }
 }
