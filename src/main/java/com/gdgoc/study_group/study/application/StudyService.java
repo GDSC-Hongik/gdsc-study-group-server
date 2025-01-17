@@ -52,7 +52,7 @@ public class StudyService {
    * @param createRequest 스터디 생성 DTO
    * @return ResponseDTO 반환
    */
-  public StudyCreateResponse createStudy(Long userId, StudyCreateRequest createRequest) {
+  public Long createStudy(Long userId, StudyCreateRequest createRequest) {
 
     Study study =
         Study.builder()
@@ -87,7 +87,7 @@ public class StudyService {
 
     studyRepository.save(study);
 
-    return StudyCreateResponse.builder().message("스터디가 생성되었습니다").id(study.getId()).build();
+    return study.getId();
   }
 
   /**

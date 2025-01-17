@@ -6,6 +6,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class StudyCreateResponse {
-  private String message;
   private Long id;
 }
