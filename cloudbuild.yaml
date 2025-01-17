@@ -16,5 +16,17 @@ steps:
       - 'gcr.io/$PROJECT_ID/gdsc-study-group-server:$COMMIT_SHA'
       - '--region'
       - 'SERVICE_REGION'
+  # Output runtime environment variables
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'services'
+      - 'describe'
+      - 'gdsc-study-group-server'
+      - '--region'
+      - 'SERVICE_REGION'
+      - '--format'
+      - 'json'
 images:
   - 'gcr.io/$PROJECT_ID/gdsc-study-group-server:$COMMIT_SHA'
