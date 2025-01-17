@@ -38,10 +38,22 @@ public class StudyController {
 
     if (studyDetail == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-              .body(MessageResponse.builder().message("해당하는 스터디가 없습니다.").build());
+          .body(MessageResponse.builder().message("해당하는 스터디가 없습니다.").build());
     }
 
     return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
+  }
+
+  @PatchMapping("/{studyId}")
+  public ResponseEntity<?> updateStudy(
+      @PathVariable("studyId") Long studyId, @RequestBody StudyCreateRequest updateRequest) {
+    Long updatedStudyId = studyService.updateStudy(studyId, updateRequest);
+    if (updatedStudyId == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(MessageResponse.builder().message("해당하는 스터디가 없습니다").build());
+    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(StudyCreateResponse.builder().message("스터디가 수정되었습니다.").id(updatedStudyId).build());
   }
 
   @DeleteMapping("/{studyId}")
@@ -51,10 +63,10 @@ public class StudyController {
 
     if (isStudyExist) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-              .body(MessageResponse.builder().message("스터디가 삭제되었습니다.").build());
+          .body(MessageResponse.builder().message("스터디가 삭제되었습니다.").build());
     }
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(MessageResponse.builder().message("해당하는 스터디가 없습니다.").build());
+        .body(MessageResponse.builder().message("해당하는 스터디가 없습니다.").build());
   }
 }
