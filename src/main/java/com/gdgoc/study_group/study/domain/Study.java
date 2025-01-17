@@ -20,7 +20,7 @@ public class Study {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToMany(mappedBy = "study")
+  @OneToMany(mappedBy = "study", cascade = CascadeType.PERSIST)
   private List<StudyMember> studyMembers = new ArrayList<>();
 
   @OneToMany(mappedBy = "study")

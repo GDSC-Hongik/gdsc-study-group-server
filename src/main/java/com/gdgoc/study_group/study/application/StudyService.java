@@ -4,9 +4,12 @@ import com.gdgoc.study_group.curriculum.domain.Curriculum;
 import com.gdgoc.study_group.curriculum.dto.CurriculumDTO;
 import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.day.dto.DayDTO;
+import com.gdgoc.study_group.member.dao.MemberRepository;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
+import com.gdgoc.study_group.studyMember.domain.StudyMember;
+import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +21,38 @@ public class StudyService {
 
   public final StudyRepository studyRepository;
 
-  public StudyService(StudyRepository studyRepository) {
+  public StudyService(StudyRepository studyRepository, MemberRepository memberRepository) {
     this.studyRepository = studyRepository;
+  }
+
+  private Curriculum createCurriculum(CurriculumDTO curriculumDTO, Study study) {
+    return Curriculum.builder()
+                    .study(study)
+                    .week(curriculumDTO.getWeek())
+                    .subject(curriculumDTO.getSubject())
+                    .build();
+  }
+
+  private CurriculumDTO curriculumEntityToDTO(Curriculum curriculum) {
+    return CurriculumDTO.builder()
+                    .week(curriculum.getWeek())
+                    .subject(curriculum.getSubject())
+                    .build();
+  }
+
+  private DayDTO dayEntityToDTO(Day day) {
+    return DayDTO.builder()
+            .day(day.getDay())
+            .startTime(day.getStartTime())
+            .build();
+  }
+
+  private Day createDay(DayDTO dayDTO, Study study) {
+    return Day.builder()
+            .study(study)
+            .day(dayDTO.getDay())
+            .startTime(dayDTO.getStartTime())
+            .build();
   }
 
   /**
@@ -28,7 +61,7 @@ public class StudyService {
    * @param createRequest 스터디 생성 DTO
    * @return ResponseDTO 반환
    */
-  public StudyCreateResponse createStudy(StudyCreateRequest createRequest) {
+  public StudyCreateResponse createStudy(Long userId, StudyCreateRequest createRequest) {
 
     Study study =
         Study.builder()
@@ -39,31 +72,25 @@ public class StudyService {
             .maxParticipants(createRequest.getMaxParticipants())
             .studyStatus(createRequest.getStudyStatus())
             .curriculums(new ArrayList<>()) // 빈 리스트로 초기화
-            .days(new ArrayList<>()) // 빈 리스트로 초기화
+            .days(new ArrayList<>())
+            .studyMembers(new ArrayList<>())
             .isApplicationClosed(false) // 스터디 생성할 때 false로 설정
             .build();
 
+    // 스터디를 생성한 유저를 스터디장으로 설정한 뒤 studyMembers에 추가
+    // 하려고 하는데 아직 구현중
+
+    // 등록된 커리큘럼이 있다면 엔티티로 변환하여 스터디에 추가
     if (createRequest.getCurriculums() != null) {
       for (CurriculumDTO curriculumDTO : createRequest.getCurriculums()) {
-        Curriculum curriculum =
-            Curriculum.builder()
-                .study(study)
-                .week(curriculumDTO.getWeek())
-                .subject(curriculumDTO.getSubject())
-                .build();
-        study.getCurriculums().add(curriculum);
+        study.getCurriculums().add(createCurriculum(curriculumDTO, study));
       }
     }
 
+    // 등록된 스터디 날짜가 있다면 엔티티로 변환하여 스터디에 추가
     if (createRequest.getDays() != null) {
       for (DayDTO dayDTO : createRequest.getDays()) {
-        Day day =
-            Day.builder()
-                .study(study)
-                .day(dayDTO.getDay())
-                .startTime(dayDTO.getStartTime())
-                .build();
-        study.getDays().add(day);
+        study.getDays().add(createDay(dayDTO, study));
       }
     }
 
@@ -121,20 +148,14 @@ public class StudyService {
       // curriculum이 있다면 curriculumDTO로 변환해 response에 추가
       if (study.get().getCurriculums() != null) {
         for (Curriculum curriculum : study.get().getCurriculums()) {
-          CurriculumDTO curriculumDTO =
-              CurriculumDTO.builder()
-                  .week(curriculum.getWeek())
-                  .subject(curriculum.getSubject())
-                  .build();
-          detailResponse.getCurriculums().add(curriculumDTO);
+          detailResponse.getCurriculums().add(curriculumEntityToDTO(curriculum));
         }
       }
 
       // day가 있다면 dayDTO로 변환해 response에 추가
       if (study.get().getDays() != null) {
         for (Day day : study.get().getDays()) {
-          DayDTO dayDTO = DayDTO.builder().day(day.getDay()).startTime(day.getStartTime()).build();
-          detailResponse.getDays().add(dayDTO);
+          detailResponse.getDays().add(dayEntityToDTO(day));
         }
       }
 
@@ -147,16 +168,15 @@ public class StudyService {
    * 스터디장 권한 확인 필요 스터디를 삭제합니다
    *
    * @param studyId 삭제할 스터디의 아이디
-   * @return 삭제 완료 메시지를 담은 MessageResponse DTO
+   * @return 해당하는 스터디의 존재 여부
    */
-  public MessageResponse deleteStudy(Long studyId) {
+  public boolean deleteStudy(Long studyId) {
     Optional<Study> study = studyRepository.findById(studyId);
 
-    if (study.isEmpty()) {
-      return null;
+    if (study.isPresent()) {
+      studyRepository.deleteById(studyId);
     }
 
-    studyRepository.deleteById(studyId);
-    return MessageResponse.builder().message("스터디가 삭제되었습니다.").build();
+    return study.isPresent();
   }
 }

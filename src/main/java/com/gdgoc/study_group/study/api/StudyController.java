@@ -13,16 +13,14 @@ import org.springframework.web.bind.annotation.*;
 public class StudyController {
 
   public final StudyService studyService;
-  private final StudyRepository studyRepository;
 
   public StudyController(StudyService studyService, StudyRepository studyRepository) {
     this.studyService = studyService;
-    this.studyRepository = studyRepository;
   }
 
   @PostMapping()
   public ResponseEntity<StudyCreateResponse> createStudy(@RequestBody StudyCreateRequest request) {
-    StudyCreateResponse newStudy = studyService.createStudy(request);
+    StudyCreateResponse newStudy = studyService.createStudy(1L, request); // 임시 유저
 
     return ResponseEntity.status(HttpStatus.CREATED).body(newStudy);
   }
@@ -39,9 +37,8 @@ public class StudyController {
     StudyDetailResponse studyDetail = studyService.getStudyDetail(studyId);
 
     if (studyDetail == null) {
-      MessageResponse messageResponse = MessageResponse.builder().message("해당하는 스터디가 없습니다.").build();
-
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageResponse);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(MessageResponse.builder().message("해당하는 스터디가 없습니다.").build());
     }
 
     return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
@@ -50,13 +47,14 @@ public class StudyController {
   @DeleteMapping("/{studyId}")
   public ResponseEntity<MessageResponse> deleteStudy(@PathVariable("studyId") Long studyId) {
 
-    MessageResponse messageResponse = studyService.deleteStudy(studyId);
+    boolean isStudyExist = studyService.deleteStudy(studyId);
 
-    if (messageResponse == null) {
-      messageResponse = MessageResponse.builder().message("스터디가 삭제되었습니다.").build();
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageResponse);
+    if (isStudyExist) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT)
+              .body(MessageResponse.builder().message("스터디가 삭제되었습니다.").build());
     }
 
-    return ResponseEntity.status(HttpStatus.OK).body(messageResponse);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(MessageResponse.builder().message("해당하는 스터디가 없습니다.").build());
   }
 }
