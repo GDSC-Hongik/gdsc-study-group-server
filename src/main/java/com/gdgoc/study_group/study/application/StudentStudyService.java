@@ -56,12 +56,12 @@ public class StudyService {
 
     Study study =
         Study.builder()
-            .name(createRequest.getName())
-            .description(createRequest.getDescription())
-            .requirement(createRequest.getRequirements())
-            .question(createRequest.getQuestion())
-            .maxParticipants(createRequest.getMaxParticipants())
-            .studyStatus(createRequest.getStudyStatus())
+            .name(createRequest.name())
+            .description(createRequest.description())
+            .requirement(createRequest.requirements())
+            .question(createRequest.question())
+            .maxParticipants(createRequest.maxParticipants())
+            .studyStatus(createRequest.studyStatus())
             .curriculums(new ArrayList<>()) // 빈 리스트로 초기화
             .days(new ArrayList<>())
             .studyMembers(new ArrayList<>())
@@ -72,15 +72,15 @@ public class StudyService {
     // 하려고 하는데 아직 구현중
 
     // 등록된 커리큘럼이 있다면 엔티티로 변환하여 스터디에 추가
-    if (createRequest.getCurriculums() != null) {
-      for (CurriculumDTO curriculumDTO : createRequest.getCurriculums()) {
+    if (createRequest.curriculums() != null) {
+      for (CurriculumDTO curriculumDTO : createRequest.curriculums()) {
         study.getCurriculums().add(createCurriculum(curriculumDTO, study));
       }
     }
 
     // 등록된 스터디 날짜가 있다면 엔티티로 변환하여 스터디에 추가
-    if (createRequest.getDays() != null) {
-      for (DayDTO dayDTO : createRequest.getDays()) {
+    if (createRequest.days() != null) {
+      for (DayDTO dayDTO : createRequest.days()) {
         study.getDays().add(createDay(dayDTO, study));
       }
     }
@@ -177,15 +177,15 @@ public class StudyService {
             .build();
 
     // 등록된 커리큘럼이 있다면 엔티티로 변환하여 스터디에 추가
-    if (updateRequest.getCurriculums() != null) {
-      for (CurriculumDTO curriculumDTO : updateRequest.getCurriculums()) {
+    if (updateRequest.curriculums() != null) {
+      for (CurriculumDTO curriculumDTO : updateRequest.curriculums()) {
         updatedStudy.getCurriculums().add(createCurriculum(curriculumDTO, updatedStudy));
       }
     }
 
     // 등록된 스터디 날짜가 있다면 엔티티로 변환하여 스터디에 추가
     if (updatedStudy.getDays() != null) {
-      for (DayDTO dayDTO : updateRequest.getDays()) {
+      for (DayDTO dayDTO : updateRequest.days()) {
         updatedStudy.getDays().add(createDay(dayDTO, updatedStudy));
       }
     }
