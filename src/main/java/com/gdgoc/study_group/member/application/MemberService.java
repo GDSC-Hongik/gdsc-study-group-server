@@ -3,6 +3,7 @@ package com.gdgoc.study_group.member.application;
 import com.gdgoc.study_group.member.dao.MemberRepository;
 import com.gdgoc.study_group.member.domain.Member;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import com.gdgoc.study_group.member.dto.request.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,14 @@ public class MemberService {
 
     Member member = getMember(memberId);
 
-    member.updateMember(request.name(), request.github(), request.studentNumber());
+    // 수정할 정보가 있을 시, dto에 담겨온 정보로 수정됨
+    String updatedName = Optional.ofNullable(request.name())
+            .orElse(member.getName());
+    String updatedGithub = Optional.ofNullable(request.github())
+            .orElse(member.getGithub());
+    String updatedStudentNumber = Optional.ofNullable(request.studentNumber())
+            .orElse(member.getStudentNumber());
+
+    member.updateMember(updatedName, updatedGithub, updatedStudentNumber);
   }
 }
