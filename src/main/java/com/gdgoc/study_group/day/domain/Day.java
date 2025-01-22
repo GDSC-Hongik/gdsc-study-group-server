@@ -12,10 +12,8 @@ import java.time.LocalTime;
 import lombok.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Day {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +27,15 @@ public class Day {
 
   @JsonFormat(pattern = "HH:mm")
   private LocalTime startTime;
+
+  @Builder(access = AccessLevel.PRIVATE)
+  public Day(Study study, String day, LocalTime startTime) {
+    this.study = study;
+    this.day = day;
+    this.startTime = startTime;
+  }
+
+  public static Day create(Study study, String day, LocalTime startTime) {
+    return Day.builder().study(study).day(day).startTime(startTime).build();
+  }
 }
