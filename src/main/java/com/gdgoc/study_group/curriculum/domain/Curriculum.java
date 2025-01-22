@@ -10,10 +10,8 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Curriculum {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +23,15 @@ public class Curriculum {
 
   private Integer week;
   private String subject; // 해당 회차의 주제
+
+  @Builder(access = AccessLevel.PRIVATE)
+  public Curriculum(Study study, Integer week, String subject) {
+    this.study = study;
+    this.week = week;
+    this.subject = subject;
+  }
+
+  public static Curriculum create(Study study, Integer week, String subject) {
+    return Curriculum.builder().study(study).week(week).subject(subject).build();
+  }
 }
