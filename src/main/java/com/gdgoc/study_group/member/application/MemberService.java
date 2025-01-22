@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
   private final MemberRepository memberRepository;
@@ -39,7 +40,6 @@ public class MemberService {
    * @param memberId 멤버를 조회할 정보
    * @return Member 형태로 반환
    */
-  @Transactional(readOnly = true)
   public Member getMember(Long memberId) {
     return memberRepository
         .findById(memberId)
