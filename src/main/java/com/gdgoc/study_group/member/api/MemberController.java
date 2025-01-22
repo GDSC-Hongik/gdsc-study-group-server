@@ -2,8 +2,7 @@ package com.gdgoc.study_group.member.api;
 
 import com.gdgoc.study_group.member.application.MemberService;
 import com.gdgoc.study_group.member.domain.Member;
-import com.gdgoc.study_group.member.dto.request.MemberCreateRequestDto;
-import com.gdgoc.study_group.member.dto.request.MemberUpdateRequestDto;
+import com.gdgoc.study_group.member.dto.request.MemberRequestDto;
 import com.gdgoc.study_group.member.dto.response.MemberCreateResponseDto;
 import com.gdgoc.study_group.member.dto.response.MemberGetResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,12 +27,11 @@ public class MemberController {
      */
     @Operation(summary = "멤버 생성", description = "관리자가 직접 정보 넣어서 멤버 생성")
     @PostMapping
-    public ResponseEntity<MemberCreateResponseDto> createMember(@RequestBody MemberCreateRequestDto request) {
+    public ResponseEntity<MemberCreateResponseDto> createMember(@RequestBody MemberRequestDto request) {
         Member createdMember = memberService.createMember(request);
 
-        MemberCreateResponseDto response = MemberCreateResponseDto.builder()
-                .studentId(createdMember.getId().toString())
-                .build();
+        // record 생성자 직접 호출
+        MemberCreateResponseDto response = new MemberCreateResponseDto(createdMember.getId().toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -57,12 +55,13 @@ public class MemberController {
 
         Member member = memberService.getMember(memberId);
 
-        MemberGetResponseDto response = MemberGetResponseDto.builder()
-                .studentId(member.getId().toString())
-                .name(member.getName())
-                .github(member.getGithub())
-                .studentNumber(member.getStudentNumber())
-                .build();
+        // record 생성자 직접 호출
+        MemberGetResponseDto response = new MemberGetResponseDto(
+                member.getId().toString(),
+                member.getName(),
+                member.getGithub(),
+                member.getStudentNumber()
+        );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -78,7 +77,7 @@ public class MemberController {
     @PatchMapping("/{id}/profile")
     public ResponseEntity<String> updateMemberProfile(
             @PathVariable("id") Long memberId,
-            @RequestBody MemberUpdateRequestDto request
+            @RequestBody MemberRequestDto request
 //            @RequestHeader("Authorization") String authorizationHeader
     ) {
 //        // Bearer 토큰 추출

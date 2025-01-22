@@ -2,9 +2,8 @@ package com.gdgoc.study_group.member.application;
 
 import com.gdgoc.study_group.member.dao.MemberRepository;
 import com.gdgoc.study_group.member.domain.Member;
-import com.gdgoc.study_group.member.dto.request.MemberCreateRequestDto;
-import com.gdgoc.study_group.member.dto.request.MemberUpdateRequestDto;
 import java.util.NoSuchElementException;
+import com.gdgoc.study_group.member.dto.request.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +21,13 @@ public class MemberService {
    * @return Member 형태로 반환
    */
   @Transactional
-  public Member createMember(MemberCreateRequestDto request) {
+  public Member createMember(MemberRequestDto request) {
 
     Member newMember =
         Member.builder()
-            .name(request.getName())
-            .github(request.getGithub())
-            .studentNumber(request.getStudentNumber())
+            .name(request.name())
+            .github(request.github())
+            .studentNumber(request.studentNumber())
             .build();
 
     return memberRepository.save(newMember);
@@ -54,10 +53,10 @@ public class MemberService {
    * @param request 수정할 정보
    */
   @Transactional
-  public void updateMember(Long memberId, MemberUpdateRequestDto request) {
+  public void updateMember(Long memberId, MemberRequestDto request) {
 
     Member member = getMember(memberId);
 
-    member.updateMember(request.getName(), request.getGithub(), request.getStudentNumber());
+    member.updateMember(request.name(), request.github(), request.studentNumber());
   }
 }
