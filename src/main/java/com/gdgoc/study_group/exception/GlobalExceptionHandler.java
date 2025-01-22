@@ -10,16 +10,17 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
-        log.info("CustomException : {}", e.getMessage());
-        return ResponseEntity.status(e.getErrorCode().getStatus()).body(ErrorResponse.of(e.getErrorCode()));
-    }
+  @ExceptionHandler(CustomException.class)
+  public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+    log.info("CustomException : {}", e.getMessage());
+    return ResponseEntity.status(e.getErrorCode().getStatus())
+        .body(ErrorResponse.of(e.getErrorCode()));
+  }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("INTERNAL_SERVER_ERROR : {}", e.getMessage());
-        return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
-                .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
-    }
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    log.error("INTERNAL_SERVER_ERROR : {}", e.getMessage());
+    return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+        .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
+  }
 }
