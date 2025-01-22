@@ -1,0 +1,76 @@
+package com.gdgoc.study_group.study.application;
+
+import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
+
+import com.gdgoc.study_group.curriculum.domain.Curriculum;
+import com.gdgoc.study_group.day.domain.Day;
+import com.gdgoc.study_group.exception.CustomException;
+import com.gdgoc.study_group.study.dao.StudyRepository;
+import com.gdgoc.study_group.study.domain.Study;
+import com.gdgoc.study_group.study.dto.StudyCreateRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class LeaderStudyService {
+
+  // TODO: 스터디장 권한 확인 필요
+
+  public final StudyRepository studyRepository;
+
+  /**
+   * 스터디 정보를 수정합니다.
+   *
+   * @param studyId 수정할 스터디 ID
+   * @param request 수정할 스터디의 정보
+   */
+  @Transactional(readOnly = false)
+  public void updateStudy(Long studyId, StudyCreateRequest request) {
+    Study study =
+        studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+
+    study.update(
+        request.name(),
+        request.description(),
+        request.requirement(),
+        request.question(),
+        request.maxParticipants(),
+        request.studyStatus());
+
+    study.getCurriculums().clear();
+    study
+        .getCurriculums()
+        .addAll(
+            request.curriculums().stream()
+                .map(
+                    curriculumDTO ->
+                        Curriculum.create(study, curriculumDTO.week(), curriculumDTO.subject()))
+                .toList());
+
+    study.getDays().clear();
+    study
+        .getDays()
+        .addAll(
+            request.days().stream()
+                .map(dayDTO -> Day.create(study, dayDTO.day(), dayDTO.startTime()))
+                .toList());
+
+    studyRepository.save(study);
+  }
+
+  /**
+   * 스터디장 권한 확인 필요 스터디를 삭제합니다
+   *
+   * @param studyId 삭제할 스터디의 아이디
+   * @return 해당하는 스터디의 존재 여부
+   */
+  @Transactional(readOnly = false)
+  public void deleteStudy(Long studyId) {
+    Study study =
+        studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+    studyRepository.delete(study);
+  }
+}
