@@ -1,72 +1,65 @@
 package com.gdgoc.study_group.study.api;
 
-import com.gdgoc.study_group.study.application.StudyService;
-import com.gdgoc.study_group.study.dao.StudyRepository;
+import com.gdgoc.study_group.study.application.StudentStudyService;
+import com.gdgoc.study_group.study.application.LeaderStudyService;
 import com.gdgoc.study_group.study.dto.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/studies")
+@Tag(name = "Study")
+@RequiredArgsConstructor
 public class StudyController {
 
-  public final StudyService studyService;
+  public final StudentStudyService studentStudyService;
+  public final LeaderStudyService leaderStudyService;
 
-  public StudyController(StudyService studyService, StudyRepository studyRepository) {
-    this.studyService = studyService;
-  }
-
+  @Operation(summary = "스터디 생성", description = "자율스터디를 생성합니다.")
   @PostMapping()
-  public ResponseEntity<StudyCreateResponse> createStudy(@RequestBody StudyCreateRequest request) {
-    Long createdStudyId = studyService.createStudy(1L, request); // 임시 유저
+  public ResponseEntity<Long> createStudy(@RequestBody StudyCreateRequest request) {
+    Long studyId = studentStudyService.createStudy(request);
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-            .body(StudyCreateResponse.builder().id(createdStudyId).build());
+    return ResponseEntity.ok(studyId);
   }
 
+  @Operation(summary = "전체 스터디 조회", description = "모든 스터디를 조회합니다.")
   @GetMapping()
-  public ResponseEntity<List<StudyListResponse>> getStudyList() {
-    List<StudyListResponse> studyList = studyService.getStudyList();
+  public ResponseEntity<List<StudyResponse>> getStudyList() {
+    List<StudyResponse> studyList = studentStudyService.getAllStudies();
 
     return ResponseEntity.status(HttpStatus.OK).body(studyList);
   }
 
+  @Operation(summary = "개별 스터디 조회", description = "스터디 하나의 정보를 조회합니다.")
   @GetMapping("/{studyId}")
   public ResponseEntity<?> getStudyDetail(@PathVariable("studyId") Long studyId) {
-    StudyDetailResponse studyDetail = studyService.getStudyDetail(studyId);
-
-    if (studyDetail == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당하는 스터디가 없습니다.");
-    }
+    StudyResponse studyDetail = studentStudyService.getStudyDetail(studyId);
 
     return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
   }
 
+  @Operation(summary = "스터디 수정", description = "스터디 정보를 수정합니다. 스터디장만 수정할 수 있습니다.")
   @PatchMapping("/{studyId}")
   public ResponseEntity<?> updateStudy(
       @PathVariable("studyId") Long studyId, @RequestBody StudyCreateRequest updateRequest) {
 
-    Long updatedStudyId = studyService.updateStudy(studyId, updateRequest);
+    leaderStudyService.updateStudy(studyId, updateRequest);
 
-    if (updatedStudyId == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(StudyCreateResponse.builder().id(updatedStudyId).build());
+    return ResponseEntity.ok().build();
   }
 
+  @Operation(summary = "스터디 삭제", description = "스터디를 삭제합니다. 스터디장만 삭제할 수 있습니다.")
   @DeleteMapping("/{studyId}")
   public ResponseEntity<String> deleteStudy(@PathVariable("studyId") Long studyId) {
 
-    boolean isStudyExist = studyService.deleteStudy(studyId);
+    leaderStudyService.deleteStudy(studyId);
 
-    if (isStudyExist) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).body("스터디가 삭제되었습니다.");
-    }
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당하는 스터디가 없습니다.");
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("스터디가 삭제되었습니다.");
   }
 }
