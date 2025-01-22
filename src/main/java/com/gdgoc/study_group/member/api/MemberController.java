@@ -1,4 +1,4 @@
-package com.gdgoc.study_group.member.controller;
+package com.gdgoc.study_group.member.api;
 
 import com.gdgoc.study_group.member.application.MemberService;
 import com.gdgoc.study_group.member.domain.Member;
@@ -6,6 +6,8 @@ import com.gdgoc.study_group.member.dto.request.MemberCreateRequestDto;
 import com.gdgoc.study_group.member.dto.request.MemberUpdateRequestDto;
 import com.gdgoc.study_group.member.dto.response.MemberCreateResponseDto;
 import com.gdgoc.study_group.member.dto.response.MemberGetResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Tag(name = "Member", description = "회원 API")
 public class MemberController {
     private final MemberService memberService;
 
@@ -23,8 +26,9 @@ public class MemberController {
      * @param request 새로 만들 멤버 정보
      * @return 성공하면 생성 성공 메시지와 생성된 회원의 ID 반환
      */
+    @Operation(summary = "멤버 생성", description = "관리자가 직접 정보 넣어서 멤버 생성")
     @PostMapping
-    public ResponseEntity<?> createMember(@RequestBody MemberCreateRequestDto request) {
+    public ResponseEntity<MemberCreateResponseDto> createMember(@RequestBody MemberCreateRequestDto request) {
         Member createdMember = memberService.createMember(request);
 
         MemberCreateResponseDto response = MemberCreateResponseDto.builder()
@@ -40,6 +44,7 @@ public class MemberController {
      * @param memberId 멤버를 조회할 정보
      * @return 성공하면 성공 메시지와 회원 정보 반환
      */
+    @Operation(summary = "멤버 조회", description = "url에 담긴 id 정보로 해당 회원 정보 조회")
     @GetMapping("/{id}/profile")
     public ResponseEntity<MemberGetResponseDto> getMember(
             @PathVariable("id") Long memberId
@@ -69,6 +74,7 @@ public class MemberController {
      * @param request 수정할 정보
      * @return 성공하면 성공 메시지 204 반환
      */
+    @Operation(summary = "멤버 정보 수정", description = "url에 담긴 id 정보로 해당 회원 정보 수정")
     @PatchMapping("/{id}/profile")
     public ResponseEntity<String> updateMemberProfile(
             @PathVariable("id") Long memberId,
