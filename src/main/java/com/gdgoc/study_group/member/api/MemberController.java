@@ -75,7 +75,7 @@ public class MemberController {
      */
     @Operation(summary = "멤버 정보 수정", description = "url에 담긴 id 정보로 해당 회원 정보 수정")
     @PatchMapping("/{id}/profile")
-    public ResponseEntity<String> updateMemberProfile(
+    public ResponseEntity<Void> updateMemberProfile(
             @PathVariable("id") Long memberId,
             @RequestBody MemberRequestDto request
 //            @RequestHeader("Authorization") String authorizationHeader
@@ -87,6 +87,6 @@ public class MemberController {
 
         memberService.updateMember(memberId, request);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("프로필 수정 성공");
+        return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
     }
 }
