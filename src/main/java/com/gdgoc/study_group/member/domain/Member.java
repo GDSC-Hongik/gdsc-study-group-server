@@ -14,7 +14,7 @@ import lombok.*;
 @Entity
 @Builder
 @ToString
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class Member {
