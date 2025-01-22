@@ -21,6 +21,7 @@ public class MemberService {
    * @param request 새로 만들 멤버 정보
    * @return Member 형태로 반환
    */
+  @Transactional
   public Member createMember(MemberCreateRequestDto request) {
 
     Member newMember =
@@ -39,6 +40,7 @@ public class MemberService {
    * @param memberId 멤버를 조회할 정보
    * @return Member 형태로 반환
    */
+  @Transactional(readOnly = true)
   public Member getMember(Long memberId) {
     return memberRepository
         .findById(memberId)
