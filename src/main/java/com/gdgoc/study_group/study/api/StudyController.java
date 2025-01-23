@@ -1,7 +1,7 @@
 package com.gdgoc.study_group.study.api;
 
-import com.gdgoc.study_group.study.application.StudentStudyService;
 import com.gdgoc.study_group.study.application.LeaderStudyService;
+import com.gdgoc.study_group.study.application.StudentStudyService;
 import com.gdgoc.study_group.study.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
