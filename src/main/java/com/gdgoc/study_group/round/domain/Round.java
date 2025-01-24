@@ -10,11 +10,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class Round {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +42,18 @@ public class Round {
   private String goal; // 학습 목표
   private String studyDetail; // 학습 내용
   private LocalDate roundDate; // 회차 진행한 날짜
+
+  @Builder
+  public Round(Study study, String goal, String studyDetail, LocalDate roundDate) {
+    this.study = study;
+    this.goal = goal;
+    this.studyDetail = studyDetail;
+    this.roundDate = roundDate;
+  }
+
+  public void updateDetails(String goal, String studyDetail, LocalDate roundDate) {
+    this.goal = goal;
+    this.studyDetail = studyDetail;
+    this.roundDate = roundDate;
+  }
 }
