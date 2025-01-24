@@ -2,17 +2,24 @@ package com.gdgoc.study_group.study.domain;
 
 import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.curriculum.domain.Curriculum;
+import com.gdgoc.study_group.curriculum.dto.CurriculumDTO;
 import com.gdgoc.study_group.day.domain.Day;
+import com.gdgoc.study_group.day.dto.DayDTO;
 import com.gdgoc.study_group.round.domain.Round;
+import com.gdgoc.study_group.study.dto.StudyCreateUpdateRequest;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Study {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,22 +50,6 @@ public class Study {
   private Integer maxParticipants; // null == 인원 제한 X
   private Boolean isApplicationClosed = false; // 멤버 지원 종료 여부(기본값은 지원 가능)
 
-  @Builder(access = AccessLevel.PRIVATE)
-  private Study(
-      String name,
-      String description,
-      String requirement,
-      String question,
-      Integer maxParticipants,
-      StudyStatus studyStatus) {
-    this.name = name;
-    this.description = description;
-    this.requirement = requirement;
-    this.question = question;
-    this.maxParticipants = maxParticipants;
-    this.studyStatus = studyStatus;
-  }
-
   public static Study create(
       String name,
       String description,
@@ -76,23 +67,46 @@ public class Study {
         .build();
   }
 
-  public void addInfo(List<Curriculum> curriculums, List<Day> days) {
+  public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
+    // 등록된 커리큘럼이 있다면 엔티티로 변환하여 리스트에 추가
+    List<Curriculum> curriculums = curriculumDTOs.stream()
+                    .map(curriculumDTO -> Curriculum.create(this, curriculumDTO.week(), curriculumDTO.subject()))
+                    .toList();
+
+    // 등록된 스터디 날짜가 있다면 엔티티로 변환하여 리스트에 추가
+    List<Day> days = dayDTOs.stream()
+                    .map(dayDTO -> Day.create(this, dayDTO.day(), dayDTO.startTime()))
+                    .toList();
+
+
     this.curriculums.addAll(curriculums);
     this.days.addAll(days);
   }
 
   public void update(
-      String name,
-      String description,
-      String requirement,
-      String question,
-      Integer maxParticipants,
-      StudyStatus studyStatus) {
+          String name,
+          String description,
+          String requirement,
+          String question,
+          Integer maxParticipants,
+          StudyStatus studyStatus,
+          List<CurriculumDTO> curriculumDTOs,
+          List<DayDTO> dayDTOs) {
     this.name = name;
     this.description = description;
     this.requirement = requirement;
     this.question = question;
     this.maxParticipants = maxParticipants;
     this.studyStatus = studyStatus;
+
+    this.getCurriculums().clear();
+    this.getCurriculums().addAll(curriculumDTOs.stream()
+                            .map(curriculumDTO -> Curriculum.create(this, curriculumDTO.week(), curriculumDTO.subject()))
+                            .toList());
+
+    this.getDays().clear();
+    this.getDays().addAll(dayDTOs.stream()
+                            .map(dayDTO -> Day.create(this, dayDTO.day(), dayDTO.startTime()))
+                            .toList());
   }
 }

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
-public record StudyCreateRequest(
+public record StudyCreateUpdateRequest(
     @NotBlank(message = "스터디 이름을 입력해 주세요.") @Schema(description = "스터디 이름") String name,
     @NotBlank(message = "스터디 소개를 입력해 주세요.") @Schema(description = "스터디 소개") String description,
     @Schema(description = "스터디 자원 자격") String requirement,

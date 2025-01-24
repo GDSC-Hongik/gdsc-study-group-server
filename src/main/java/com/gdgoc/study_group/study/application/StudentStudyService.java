@@ -2,14 +2,11 @@ package com.gdgoc.study_group.study.application;
 
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
 
-import com.gdgoc.study_group.curriculum.domain.Curriculum;
-import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +25,7 @@ public class StudentStudyService {
    * @return ResponseDTO 반환
    */
   @Transactional(readOnly = false)
-  public Long createStudy(StudyCreateRequest request) {
+  public Long createStudy(StudyCreateUpdateRequest request) {
 
     Study study =
         Study.create(
@@ -41,21 +38,7 @@ public class StudentStudyService {
 
     // TODO: 스터디를 생성한 유저를 스터디장으로 설정한 뒤 studyMembers에 추가
 
-    // 등록된 커리큘럼이 있다면 엔티티로 변환하여 리스트에 추가
-    List<Curriculum> curriculums =
-        request.curriculums().stream()
-            .map(
-                curriculumDTO ->
-                    Curriculum.create(study, curriculumDTO.week(), curriculumDTO.subject()))
-            .collect(Collectors.toList());
-
-    // 등록된 스터디 날짜가 있다면 엔티티로 변환하여 리스트에 추가
-    List<Day> days =
-        request.days().stream()
-            .map(dayDTO -> Day.create(study, dayDTO.day(), dayDTO.startTime()))
-            .collect(Collectors.toList());
-
-    study.addInfo(curriculums, days);
+    study.addInfo(request.curriculums(), request.days());
     studyRepository.save(study);
 
     return study.getId();

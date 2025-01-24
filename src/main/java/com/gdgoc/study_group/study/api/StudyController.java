@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/studies")
-@Tag(name = "Study")
+@Tag(name = "Study", description = "스터디 API")
 @RequiredArgsConstructor
 public class StudyController {
 
@@ -22,7 +22,7 @@ public class StudyController {
 
   @Operation(summary = "스터디 생성", description = "자율스터디를 생성합니다.")
   @PostMapping()
-  public ResponseEntity<Long> createStudy(@RequestBody StudyCreateRequest request) {
+  public ResponseEntity<Long> createStudy(@RequestBody StudyCreateUpdateRequest request) {
     Long studyId = studentStudyService.createStudy(request);
 
     return ResponseEntity.ok(studyId);
@@ -46,8 +46,8 @@ public class StudyController {
 
   @Operation(summary = "스터디 수정", description = "스터디 정보를 수정합니다. 스터디장만 수정할 수 있습니다.")
   @PatchMapping("/{studyId}")
-  public ResponseEntity<?> updateStudy(
-      @PathVariable("studyId") Long studyId, @RequestBody StudyCreateRequest updateRequest) {
+  public ResponseEntity<StudyResponse> updateStudy(
+      @PathVariable("studyId") Long studyId, @RequestBody StudyCreateUpdateRequest updateRequest) {
 
     leaderStudyService.updateStudy(studyId, updateRequest);
 
@@ -60,6 +60,6 @@ public class StudyController {
 
     leaderStudyService.deleteStudy(studyId);
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("스터디가 삭제되었습니다.");
+    return ResponseEntity.status(HttpStatus.RESET_CONTENT).body("스터디가 삭제되었습니다.");
   }
 }
