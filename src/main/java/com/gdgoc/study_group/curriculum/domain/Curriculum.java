@@ -7,12 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Curriculum {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +25,8 @@ public class Curriculum {
 
   private Integer week;
   private String subject; // 해당 회차의 주제
+
+  public static Curriculum create(Study study, Integer week, String subject) {
+    return Curriculum.builder().study(study).week(week).subject(subject).build();
+  }
 }
