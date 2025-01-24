@@ -31,14 +31,14 @@ public class LeaderStudyService {
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
 
     study.update(
-            request.name(),
-            request.description(),
-            request.requirement(),
-            request.question(),
-            request.maxParticipants(),
-            request.studyStatus(),
-            request.curriculums(),
-            request.days());
+        request.name(),
+        request.description(),
+        request.requirement(),
+        request.question(),
+        request.maxParticipants(),
+        request.studyStatus(),
+        request.curriculums(),
+        request.days());
 
     studyRepository.save(study);
   }
