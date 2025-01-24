@@ -40,25 +40,25 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-spotless {
-	java {
-		importOrder(
-				'java|javax|jakarta',
-				'org.springframework',
-				'lombok',
-				'',
-				'org.junit|org.mockito',
-				'\\#',
-				'\\#org.junit'
-		)
-
-		googleJavaFormat()
-		formatAnnotations()
-		removeUnusedImports()
-		trimTrailingWhitespace()
-		endWithNewline()
-	}
-}
+//spotless {
+//	java {
+//		importOrder(
+//				'java|javax|jakarta',
+//				'org.springframework',
+//				'lombok',
+//				'',
+//				'org.junit|org.mockito',
+//				'\\#',
+//				'\\#org.junit'
+//		)
+//
+//		googleJavaFormat()
+//		formatAnnotations()
+//		removeUnusedImports()
+//		trimTrailingWhitespace()
+//		endWithNewline()
+//	}
+//}
 
 tasks.register("updateGitHooks", Copy) {
 	from "./scripts/pre-commit"

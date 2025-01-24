@@ -2,8 +2,10 @@ package com.gdgoc.study_group.round.service;
 
 import com.gdgoc.study_group.round.domain.Round;
 import com.gdgoc.study_group.round.domain.RoundThumbnail;
+import com.gdgoc.study_group.round.dto.CreateRoundRequest;
 import com.gdgoc.study_group.round.dto.RoundDTO;
 import com.gdgoc.study_group.round.dto.RoundThumbnailDTO;
+import com.gdgoc.study_group.round.dto.UpdateRoundRequest;
 import com.gdgoc.study_group.round.repository.RoundRepository;
 import com.gdgoc.study_group.round.repository.RoundThumbnailRepository;
 import com.gdgoc.study_group.study.dao.StudyRepository;
@@ -18,9 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class RoundService {
-
   private final RoundRepository roundRepository;
   private final RoundThumbnailRepository roundThumbnailRepository;
   private final StudyRepository studyRepository;
@@ -28,52 +29,31 @@ public class RoundService {
   public List<RoundDTO> getRoundsByStudyId(Long studyId) {
     return roundRepository.findRoundsByStudyId(studyId)
             .stream()
-            .map(round -> new RoundDTO(
-                    round.getId(),
-                    round.getGoal(),
-                    round.getStudyDetail(),
-                    round.getRoundDate(),
-                    round.getImages().stream()
-                            .map(image -> new RoundThumbnailDTO(
-                                    image.getId(),
-                                    image.getFileName(),
-                                    image.getFilePath(),
-                                    image.getType()))
-                            .collect(Collectors.toList())))
+            .map(RoundDTO::from)
             .collect(Collectors.toList());
   }
 
   public RoundDTO getRound(Long roundId) {
     Round round = roundRepository.findById(roundId)
             .orElseThrow(() -> new IllegalArgumentException("Round not found"));
-    return new RoundDTO(
-            round.getId(),
-            round.getGoal(),
-            round.getStudyDetail(),
-            round.getRoundDate(),
-            round.getImages().stream()
-                    .map(image -> new RoundThumbnailDTO(
-                            image.getId(),
-                            image.getFileName(),
-                            image.getFilePath(),
-                            image.getType()))
-                    .collect(Collectors.toList()));
+    return RoundDTO.from(round);
   }
 
-  public RoundDTO createRound(Long studyId, String goal, String studyDetail, LocalDate roundDate, List<RoundThumbnailDTO> thumbnails) {
+  @Transactional
+  public RoundDTO createRound(Long studyId, CreateRoundRequest request) {
     Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new IllegalArgumentException("Study not found"));
 
     Round round = Round.builder()
             .study(study)
-            .goal(goal)
-            .studyDetail(studyDetail)
-            .roundDate(roundDate)
+            .goal(request.goal())
+            .studyDetail(request.studyDetail())
+            .roundDate(request.roundDate())
             .build();
 
     Round savedRound = roundRepository.save(round);
 
-    List<RoundThumbnail> savedThumbnails = thumbnails.stream()
+    List<RoundThumbnail> savedThumbnails = request.thumbnails().stream()
             .map(thumbnailDTO -> RoundThumbnail.builder()
                     .round(savedRound)
                     .fileName(thumbnailDTO.fileName())
@@ -83,30 +63,18 @@ public class RoundService {
             .collect(Collectors.toList());
 
     roundThumbnailRepository.saveAll(savedThumbnails);
-
-    return new RoundDTO(
-            savedRound.getId(),
-            savedRound.getGoal(),
-            savedRound.getStudyDetail(),
-            savedRound.getRoundDate(),
-            savedThumbnails.stream()
-                    .map(thumbnail -> new RoundThumbnailDTO(
-                            thumbnail.getId(),
-                            thumbnail.getFileName(),
-                            thumbnail.getFilePath(),
-                            thumbnail.getType()))
-                    .collect(Collectors.toList()));
+    return RoundDTO.from(savedRound);
   }
 
-  public RoundDTO updateRound(Long roundId, String goal, String studyDetail, LocalDate roundDate, List<RoundThumbnailDTO> thumbnails) {
+  @Transactional
+  public RoundDTO updateRound(Long roundId, UpdateRoundRequest request) {
     Round round = roundRepository.findById(roundId)
             .orElseThrow(() -> new IllegalArgumentException("Round not found"));
 
-    round.updateDetails(goal, studyDetail, roundDate);
+    round.updateDetails(request.goal(), request.studyDetail(), request.roundDate());
     Round updatedRound = roundRepository.save(round);
 
-    // Update thumbnails
-    List<RoundThumbnail> savedThumbnails = thumbnails.stream()
+    List<RoundThumbnail> savedThumbnails = request.thumbnails().stream()
             .map(thumbnailDTO -> RoundThumbnail.builder()
                     .round(updatedRound)
                     .fileName(thumbnailDTO.fileName())
@@ -116,21 +84,10 @@ public class RoundService {
             .collect(Collectors.toList());
 
     roundThumbnailRepository.saveAll(savedThumbnails);
-
-    return new RoundDTO(
-            updatedRound.getId(),
-            updatedRound.getGoal(),
-            updatedRound.getStudyDetail(),
-            updatedRound.getRoundDate(),
-            savedThumbnails.stream()
-                    .map(thumbnail -> new RoundThumbnailDTO(
-                            thumbnail.getId(),
-                            thumbnail.getFileName(),
-                            thumbnail.getFilePath(),
-                            thumbnail.getType()))
-                    .collect(Collectors.toList()));
+    return RoundDTO.from(updatedRound);
   }
 
+  @Transactional
   public void deleteRound(Long roundId) {
     Round round = roundRepository.findById(roundId)
             .orElseThrow(() -> new IllegalArgumentException("Round not found"));

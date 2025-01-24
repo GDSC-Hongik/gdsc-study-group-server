@@ -1,7 +1,9 @@
 package com.gdgoc.study_group.round.controller;
 
+import com.gdgoc.study_group.round.dto.CreateRoundRequest;
 import com.gdgoc.study_group.round.dto.RoundDTO;
 import com.gdgoc.study_group.round.dto.RoundThumbnailDTO;
+import com.gdgoc.study_group.round.dto.UpdateRoundRequest;
 import com.gdgoc.study_group.round.service.RoundService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,11 +42,8 @@ public class RoundController {
   @Operation(summary = "회차 생성", description = "새로운 회차를 생성합니다.")
   public ResponseEntity<RoundDTO> createRound(
           @Parameter(description = "스터디 ID", required = true) @PathVariable Long studyId,
-          @RequestParam String goal,
-          @RequestParam String studyDetail,
-          @RequestParam LocalDate roundDate,
-          @RequestBody List<RoundThumbnailDTO> thumbnails) {
-    return ResponseEntity.ok(roundService.createRound(studyId, goal, studyDetail, roundDate, thumbnails));
+          @RequestBody CreateRoundRequest request) {
+    return ResponseEntity.ok(roundService.createRound(studyId, request));
   }
 
   @PatchMapping("/{roundId}")
@@ -52,11 +51,8 @@ public class RoundController {
   public ResponseEntity<RoundDTO> updateRound(
           @Parameter(description = "스터디 ID", required = true) @PathVariable Long studyId,
           @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
-          @RequestParam String goal,
-          @RequestParam String studyDetail,
-          @RequestParam LocalDate roundDate,
-          @RequestBody List<RoundThumbnailDTO> thumbnails) {
-    return ResponseEntity.ok(roundService.updateRound(roundId, goal, studyDetail, roundDate, thumbnails));
+          @RequestBody UpdateRoundRequest request) {
+    return ResponseEntity.ok(roundService.updateRound(roundId, request));
   }
 
   @DeleteMapping("/{roundId}")
