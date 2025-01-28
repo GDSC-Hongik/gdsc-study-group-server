@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,7 +24,7 @@ public class JoinController {
      * @return 생성 시, 201 회원 가입 성공 메시지
      */
     @Operation(summary = "회원 가입", description = "학번과 비밀번호 등 정보 입력 시 회원 가입")
-    @PostMapping("/join")
+    @PostMapping("/signup")
     public ResponseEntity<Void> joinMember(@RequestBody JoinDto request) {
 
         joinService.joinMember(request);
