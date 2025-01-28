@@ -1,15 +1,25 @@
 package com.gdgoc.study_group.auth.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdgoc.study_group.auth.jwt.JwtFilter;
+import com.gdgoc.study_group.auth.jwt.JwtUtil;
+import com.gdgoc.study_group.auth.jwt.LoginFilter;
+import com.gdgoc.study_group.member.dao.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     /**
@@ -23,6 +33,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final ObjectMapper objectMapper;
+    private final JwtUtil jwtUtil;
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+
+        return configuration.getAuthenticationManager();
+    }
+
     /**
      * 인가 작업, 로그인방식 설정, csrf 설정 등 여러 설정들을 관리합니다.
      *
@@ -30,7 +50,7 @@ public class SecurityConfig {
      * @return 설정이 완료된 security filter chain 반환
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, MemberRepository memberRepository) throws Exception {
 
         // jwt는 stateless한 세션이기에 csrf에 대한 공격 방어 딱히 필요 없음
         http
@@ -43,11 +63,23 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
 
         // 경로별 인가 설정 (일단 skip)
-//        http
-//                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers( "/").permitAll()
-//                        .requestMatchers("/users").hasRole("ADMIN")
-//                        .anyRequest().authenticated());
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers( "/auth/signup", "/auth/login","/").permitAll()
+                        .requestMatchers("/auth").hasRole("ADMIN")
+                        .anyRequest().authenticated());
+
+        // JwtFilter 추가
+        http.addFilterBefore(
+                new JwtFilter(jwtUtil),
+                UsernamePasswordAuthenticationFilter.class
+        );
+
+        // LoginFilter 추가
+        http.addFilterAt(
+                new LoginFilter(objectMapper ,authenticationManager(authenticationConfiguration), jwtUtil),
+                UsernamePasswordAuthenticationFilter.class
+        );
 
         // 세션을 stateless한 상태로 진행하기 위함
         http
