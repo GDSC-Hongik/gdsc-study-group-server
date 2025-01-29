@@ -19,13 +19,13 @@ public class JwtUtil {
     }
 
     /* 검증 */
-//    public String getCategory(String token) {
-//        // category 검증
-//
-//        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
-//        // return 값으로 category 값이 반환됨
-//
-//    }
+    public String getCategory(String token) {
+        // category 검증
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+        // return 값으로 category 값이 반환됨
+
+    }
 
     public String getStudentNumber(String token) {
         // studentNumber 검증
@@ -46,11 +46,10 @@ public class JwtUtil {
     }
 
     /* 토큰 생성 */
-//    public String createJWT(String category, String studentNumber, String role, Long expiredMs) {
-    public String createJWT(String studentNumber, String role, Long expiredMs) {
+    public String createJWT(String category, String studentNumber, String role, Long expiredMs) {
 
         return Jwts.builder()
-//                .claim("category", category) // access, refresh token 구분
+                .claim("category", category) // access, refresh token 구분
                 .claim("studentNumber", studentNumber)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))

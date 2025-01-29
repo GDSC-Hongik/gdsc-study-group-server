@@ -65,7 +65,7 @@ public class SecurityConfig {
         // 경로별 인가 설정 (일단 skip)
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers( "/auth/signup", "/auth/login","/").permitAll()
+                        .requestMatchers( "/auth/signup", "/auth/login","/", "/auth/reissue").permitAll()
                         .requestMatchers("/auth").hasRole("ADMIN")
                         .anyRequest().authenticated());
 

@@ -42,10 +42,20 @@ public class JwtFilter extends OncePerRequestFilter {
         System.out.println("JWT Token: " + token);
 
         if (jwtUtil.isExpired(token)) {
-            // 토큰 만료 시간이 다 되었다면, 다음 필터로 넘김
+            // 토큰 만료 여부 확인
 
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
+        }
+
+        String category = jwtUtil.getCategory(token);
+
+        if (!category.equals("access")) {
+            // 토큰의 category가 access인지 확인
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+
         }
 
         /* 세션에 잠깐 담아둘 정보 관리 */

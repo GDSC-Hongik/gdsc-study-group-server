@@ -81,9 +81,11 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-//        String access = jwtUtil.createJWT("access", studentNumber, role, 600000L);
-        String access = jwtUtil.createJWT(studentNumber, role, 600000L);
+        String access = jwtUtil.createJWT("access", studentNumber, role, 600000L);
+        String refresh = jwtUtil.createJWT("refresh", studentNumber, role, 600000L);
+
         response.setHeader("Authorization", "Bearer " + access);
+        response.addCookie(CookieUtil.createCookie("refresh", refresh));
 
         response.setStatus(HttpStatus.OK.value());
     }
