@@ -62,6 +62,15 @@ public class StudentStudyService {
   }
 
   /**
+   * 스터디 전체 목록을 간략화해서 반환합니다
+   * @see  StudySimpleResponse
+   * @return 간략화된 스터디 전체 목록 리스트
+   */
+  public List<StudySimpleResponse> getAllSimpleStudies() {
+    return studyRepository.findAll().stream().map(StudySimpleResponse::from).toList();
+  }
+
+  /**
    * 스터디 상세 정보를 조회합니다.
    *
    * @param studyId 조회할 스터디 아이디

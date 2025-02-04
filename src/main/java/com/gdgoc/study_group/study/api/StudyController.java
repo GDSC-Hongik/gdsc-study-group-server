@@ -30,8 +30,8 @@ public class StudyController {
 
   @Operation(summary = "전체 스터디 조회", description = "모든 스터디를 조회합니다.")
   @GetMapping()
-  public ResponseEntity<List<StudyResponse>> getStudyList() {
-    List<StudyResponse> studyList = studentStudyService.getAllStudies();
+  public ResponseEntity<List<StudySimpleResponse>> getStudyList() {
+    List<StudySimpleResponse> studyList = studentStudyService.getAllSimpleStudies();
 
     return ResponseEntity.status(HttpStatus.OK).body(studyList);
   }
