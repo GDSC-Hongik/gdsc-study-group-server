@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record AuthInfoDto(
+        Long authId,
         String studentNumber,
         String role,
         String password

@@ -1,6 +1,5 @@
 package com.gdgoc.study_group.auth.domain;
 
-import com.gdgoc.study_group.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,16 +8,19 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
-public class Auth {
+public class Refresh {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "auth_id")
+    private Auth auth;
 
-    private String password;
-    private String role;
+    @Column(nullable = false)
+    private String refresh;
+
+    @Column(nullable = false)
+    private String expiration;
 }

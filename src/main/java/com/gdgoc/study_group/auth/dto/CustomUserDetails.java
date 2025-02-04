@@ -18,6 +18,7 @@ public class CustomUserDetails implements UserDetails {
 
     public CustomUserDetails(Auth auth) {
         this.authInfoDto = AuthInfoDto.builder()
+                .authId(auth.getId())
                 .studentNumber(auth.getMember().getStudentNumber())
                 .password(auth.getPassword())
                 .role(auth.getRole())
@@ -25,6 +26,10 @@ public class CustomUserDetails implements UserDetails {
     }
 
     /* UserDetails 관련 메소드들 */
+    public Long getAuthId() {
+        return authInfoDto.authId();
+    }
+
     @Override
     public String getUsername() {
         return authInfoDto.studentNumber();

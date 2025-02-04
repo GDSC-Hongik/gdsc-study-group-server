@@ -1,6 +1,7 @@
 package com.gdgoc.study_group.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdgoc.study_group.auth.application.RefreshTokenService;
 import com.gdgoc.study_group.auth.jwt.JwtFilter;
 import com.gdgoc.study_group.auth.jwt.JwtUtil;
 import com.gdgoc.study_group.auth.jwt.LoginFilter;
@@ -50,7 +51,7 @@ public class SecurityConfig {
      * @return 설정이 완료된 security filter chain 반환
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, MemberRepository memberRepository) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, MemberRepository memberRepository, RefreshTokenService refreshTokenService) throws Exception {
 
         // jwt는 stateless한 세션이기에 csrf에 대한 공격 방어 딱히 필요 없음
         http
@@ -77,7 +78,7 @@ public class SecurityConfig {
 
         // LoginFilter 추가
         http.addFilterAt(
-                new LoginFilter(objectMapper ,authenticationManager(authenticationConfiguration), jwtUtil),
+                new LoginFilter(objectMapper ,authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenService),
                 UsernamePasswordAuthenticationFilter.class
         );
 

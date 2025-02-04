@@ -1,6 +1,8 @@
 package com.gdgoc.study_group.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdgoc.study_group.auth.application.RefreshTokenService;
+import com.gdgoc.study_group.auth.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,11 +28,13 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     private static final String PASSWORD_KEY = "password";
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
-    public LoginFilter(ObjectMapper objectMapper, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public LoginFilter(ObjectMapper objectMapper, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
         super(LOGIN_URL, authenticationManager);
         this.objectMapper = objectMapper;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
     /**
@@ -73,6 +77,12 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
+        // CustomUserDetails 객체로 캐스팅
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // authId 가져오기
+        Long authId = userDetails.getAuthId();
+
         // 유저 정보
         String studentNumber = authentication.getName();
 
@@ -82,7 +92,10 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         String role = auth.getAuthority();
 
         String access = jwtUtil.createJWT("access", studentNumber, role, 600000L);
-        String refresh = jwtUtil.createJWT("refresh", studentNumber, role, 600000L);
+        String refresh = jwtUtil.createJWT("refresh", studentNumber, role, 86400000L);
+
+        // refresh token을 db에 저장
+        refreshTokenService.saveRefresh(authId, refresh, 86400000L);
 
         response.setHeader("Authorization", "Bearer " + access);
         response.addCookie(CookieUtil.createCookie("refresh", refresh));
