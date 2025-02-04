@@ -6,6 +6,8 @@ import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
+import com.gdgoc.study_group.studyMember.domain.StudyMember;
+import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,20 +30,26 @@ public class StudentStudyService {
   public Long createStudy(StudyCreateUpdateRequest request) {
 
     Study study =
-        Study.create(
-            request.name(),
-            request.description(),
-            request.requirement(),
-            request.question(),
-            request.maxParticipants(),
-            request.studyStatus());
-
-    // TODO: 스터디를 생성한 유저를 스터디장으로 설정한 뒤 studyMembers에 추가
+        Study.builder()
+                .name(request.name())
+                .description(request.description())
+                .requirement(request.requirement())
+                .question(request.question())
+                .maxParticipants(request.maxParticipants())
+                .studyStatus(request.studyStatus()).build();
 
     study.addInfo(request.curriculums(), request.days());
-    studyRepository.save(study);
 
-    return study.getId();
+    // study leader 설정
+    // TODO: 스터디를 생성한 유저를 스터디장으로 설정한 뒤 studyMembers에 추가
+    StudyMember leader = StudyMember.builder()
+//            .member() // TODO: AUTH 구현 후 토큰을 통해 구할 예정
+            .study(study)
+            .studyMemberStatus(StudyMemberStatus.LEADER)
+            .build();
+    study.getStudyMembers().add(leader);
+
+    return studyRepository.save(study).getId();
   }
 
   /**
