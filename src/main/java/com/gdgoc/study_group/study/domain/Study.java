@@ -47,24 +47,6 @@ public class Study {
   private Integer maxParticipants; // null == 인원 제한 X
   private Boolean isApplicationClosed = false; // 멤버 지원 종료 여부(기본값은 지원 가능)
 
-  public static Study create(
-      String name,
-      String description,
-      String requirement,
-      String question,
-      Integer maxParticipants,
-      StudyStatus status) {
-    return Study.builder()
-        .name(name)
-        .description(description)
-        .requirement(requirement)
-        .question(question)
-        .maxParticipants(maxParticipants)
-        .studyStatus(status)
-        .isApplicationClosed(false)
-        .build();
-  }
-
   public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
     // 등록된 커리큘럼이 있다면 엔티티로 변환하여 리스트에 추가
     this.curriculums =
