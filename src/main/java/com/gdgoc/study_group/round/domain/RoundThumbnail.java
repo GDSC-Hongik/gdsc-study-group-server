@@ -9,8 +9,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Table(name = "ROUND_THUMBNAIL")
 public class RoundThumbnail {
   @Id
@@ -28,4 +33,12 @@ public class RoundThumbnail {
   private String fileName;
   private String filePath; // 파일의 이름을 제외한 저장 위치
   private String type; // jpeg, png...
+
+  @Builder
+  public RoundThumbnail(Round round, String fileName, String filePath, String type) {
+    this.round = round;
+    this.fileName = fileName;
+    this.filePath = filePath;
+    this.type = type;
+  }
 }
