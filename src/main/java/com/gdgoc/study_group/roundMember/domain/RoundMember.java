@@ -9,8 +9,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "ROUND_MEMBER")
 public class RoundMember {
   @Id
@@ -26,4 +31,24 @@ public class RoundMember {
   private Member member;
 
   private String retrospect; // 후기 내용
+
+  public static RoundMember create(
+          Round round,
+          Member member,
+          String retrospect) {
+    return RoundMember.builder()
+            .round(round)
+            .member(member)
+            .retrospect(retrospect)
+            .build();
+  }
+
+  public void update(
+          Round round,
+          Member member,
+          String retrospect) {
+    this.round = round;
+    this.member = member;
+    this.retrospect = retrospect;
+  }
 }

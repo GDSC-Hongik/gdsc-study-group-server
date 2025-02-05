@@ -1,10 +1,11 @@
-package com.gdgoc.study_group.round.controller;
+package com.gdgoc.study_group.round.api;
 
+import com.gdgoc.study_group.round.application.RetrospectService;
 import com.gdgoc.study_group.round.dto.CreateRoundRequest;
 import com.gdgoc.study_group.round.dto.RoundDTO;
-import com.gdgoc.study_group.round.dto.RoundThumbnailDTO;
 import com.gdgoc.study_group.round.dto.UpdateRoundRequest;
-import com.gdgoc.study_group.round.service.RoundService;
+import com.gdgoc.study_group.round.application.RoundService;
+import com.gdgoc.study_group.roundMember.dto.RetrospectRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,6 +22,7 @@ import java.util.List;
 public class RoundController {
 
   private final RoundService roundService;
+  private final RetrospectService retrospectService;
 
   @GetMapping
   @Operation(summary = "특정 스터디의 모든 회차 조회", description = "특정 스터디의 모든 회차 정보를 조회합니다.")
@@ -61,6 +62,31 @@ public class RoundController {
           @Parameter(description = "스터디 ID", required = true) @PathVariable Long studyId,
           @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId) {
     roundService.deleteRound(roundId);
+    return ResponseEntity.noContent().build();
+  }
+
+
+  // ================ Retrospect ================ //
+  @Operation(summary = "회고 작성", description = "스터디를 참여한 멤버들이 회고를 작성합니다.")
+  @PostMapping("/{roundId}/retrospects")
+  public ResponseEntity<Void> createRetrospect(
+          @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
+          @RequestBody RetrospectRequest request) {
+
+    retrospectService.createRetrospect(roundId, request);
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "회고 수정", description = "작성한 회고를 수정합니다.")
+  @PatchMapping("/{roundId}/retrospects/{roundMemberId}")
+  public ResponseEntity<Void> updateRetrospect(
+          @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId,
+          @Parameter(description = "회고가 담긴 round member ID", required = true) @PathVariable Long roundMemberId,
+          @RequestBody RetrospectRequest request) {
+
+    retrospectService.updateRetrospect(roundId, roundMemberId, request);
+
     return ResponseEntity.noContent().build();
   }
 }
