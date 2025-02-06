@@ -33,7 +33,7 @@ public class RetrospectService {
      * @param request 멤버 아이디와 회고 내용
      */
     @Transactional(readOnly = false)
-    public void createRetrospect(Long roundId, RetrospectDTO request) {
+    public Long createRetrospect(Long roundId, RetrospectDTO request) {
 
         Round round = roundRepository.findById(roundId)
                 .orElseThrow(() -> new CustomException(ROUND_NOT_FOUND));
@@ -43,6 +43,8 @@ public class RetrospectService {
 
         RoundMember roundMember = RoundMember.create(round, member, request.retrospect());
         roundMemberRepository.save(roundMember);
+
+        return roundMember.getId();
     }
 
 
@@ -54,7 +56,7 @@ public class RetrospectService {
      * @param request 멤버의 아이디, 수정할 회고의 내용
      */
     @Transactional(readOnly = false)
-    public void updateRetrospect(Long roundId, Long roundMemberId, RetrospectDTO request) {
+    public Long updateRetrospect(Long roundId, Long roundMemberId, RetrospectDTO request) {
 
         Round updatedRound = roundRepository.findById(roundId)
                 .orElseThrow(() -> new CustomException(ROUND_NOT_FOUND));
@@ -69,6 +71,8 @@ public class RetrospectService {
 
         roundMember.update(updatedRound, updatedMember, request.retrospect());
         roundMemberRepository.save(roundMember);
+
+        return roundMemberId;
     }
 
 

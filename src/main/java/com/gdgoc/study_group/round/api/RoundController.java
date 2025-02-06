@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/studies/{studyId}/rounds")
@@ -69,25 +70,21 @@ public class RoundController {
   // ================ Retrospect ================ //
   @Operation(summary = "회고 작성", description = "스터디를 참여한 멤버들이 회고를 작성합니다.")
   @PostMapping("/{roundId}/retrospects")
-  public ResponseEntity<Void> createRetrospect(
+  public ResponseEntity<Map<String, Long>> createRetrospect(
           @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
           @RequestBody RetrospectDTO request) {
 
-    retrospectService.createRetrospect(roundId, request);
-
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(Map.of("round_member_id", retrospectService.createRetrospect(roundId, request)));
   }
 
   @Operation(summary = "회고 수정", description = "작성한 회고를 수정합니다.")
   @PatchMapping("/{roundId}/retrospects/{roundMemberId}")
-  public ResponseEntity<Void> updateRetrospect(
+  public ResponseEntity<Map<String, Long>> updateRetrospect(
           @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId,
           @Parameter(description = "회고(round member) ID", required = true) @PathVariable Long roundMemberId,
           @RequestBody RetrospectDTO request) {
 
-    retrospectService.updateRetrospect(roundId, roundMemberId, request);
-
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(Map.of("round_member_id", retrospectService.updateRetrospect(roundId, roundMemberId, request)));
   }
 
   @Operation(summary = "회고 삭제", description = "회고를 삭제합니다.")
