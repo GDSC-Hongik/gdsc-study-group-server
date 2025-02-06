@@ -63,10 +63,12 @@ public class StudyController {
 
   @Operation(summary = "스터디 삭제", description = "스터디를 삭제합니다. 스터디장만 삭제할 수 있습니다.")
   @DeleteMapping("/{studyId}")
-  public ResponseEntity<String> deleteStudy(@PathVariable("studyId") Long studyId) {
-
-    leaderStudyService.deleteStudy(studyId);
-
-    return ResponseEntity.status(HttpStatus.RESET_CONTENT).body("스터디가 삭제되었습니다.");
+  public ResponseEntity<Void> deleteStudy(@PathVariable("studyId") Long studyId) {
+    try {
+      leaderStudyService.deleteStudy(studyId);
+      return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
+    } catch(CustomException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 }

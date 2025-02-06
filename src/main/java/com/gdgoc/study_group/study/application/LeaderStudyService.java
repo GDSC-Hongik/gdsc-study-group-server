@@ -46,12 +46,12 @@ public class LeaderStudyService {
 
   /**
    * 스터디장 권한 확인 필요 스터디를 삭제합니다
-   *
+   * @throws CustomException 스터디가 존재하지 않을 경우
    * @param studyId 삭제할 스터디의 아이디
    * @return 해당하는 스터디의 존재 여부
    */
   @Transactional(readOnly = false)
-  public void deleteStudy(Long studyId) {
+  public void deleteStudy(Long studyId) throws CustomException {
     Study study =
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     studyRepository.delete(study);
