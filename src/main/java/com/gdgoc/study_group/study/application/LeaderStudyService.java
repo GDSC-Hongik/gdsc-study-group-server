@@ -21,12 +21,13 @@ public class LeaderStudyService {
 
   /**
    * 스터디 정보를 수정합니다.
-   *
+   * @throws CustomException 스터디가 존재하지 않을 경우
    * @param studyId 수정할 스터디 ID
    * @param request 수정할 스터디의 정보
+   * @return 업데이트된 스터디의 ID
    */
   @Transactional(readOnly = false)
-  public void updateStudy(Long studyId, StudyCreateUpdateRequest request) {
+  public Long updateStudy(Long studyId, StudyCreateUpdateRequest request) throws CustomException {
     Study study =
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
 
@@ -40,7 +41,7 @@ public class LeaderStudyService {
         request.curriculums(),
         request.days());
 
-    studyRepository.save(study);
+    return studyRepository.save(study).getId();
   }
 
   /**

@@ -50,12 +50,15 @@ public class StudyController {
 
   @Operation(summary = "스터디 수정", description = "스터디 정보를 수정합니다. 스터디장만 수정할 수 있습니다.")
   @PatchMapping("/{studyId}")
-  public ResponseEntity<StudyResponse> updateStudy(
+  public ResponseEntity<Long> updateStudy(
       @PathVariable("studyId") Long studyId, @RequestBody StudyCreateUpdateRequest updateRequest) {
 
-    leaderStudyService.updateStudy(studyId, updateRequest);
-
-    return ResponseEntity.ok().build();
+    try {
+      Long id = leaderStudyService.updateStudy(studyId, updateRequest);
+      return ResponseEntity.status(HttpStatus.OK).body(id);
+    } catch (CustomException e) { // 스터디가 없을 경우
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 
   @Operation(summary = "스터디 삭제", description = "스터디를 삭제합니다. 스터디장만 삭제할 수 있습니다.")
