@@ -1,5 +1,6 @@
 package com.gdgoc.study_group.study.api;
 
+import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.study.application.LeaderStudyService;
 import com.gdgoc.study_group.study.application.StudentStudyService;
 import com.gdgoc.study_group.study.dto.*;
@@ -38,10 +39,13 @@ public class StudyController {
 
   @Operation(summary = "개별 스터디 조회", description = "스터디 하나의 정보를 조회합니다.")
   @GetMapping("/{studyId}")
-  public ResponseEntity<?> getStudyDetail(@PathVariable("studyId") Long studyId) {
-    StudyResponse studyDetail = studentStudyService.getStudyDetail(studyId);
-
-    return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
+  public ResponseEntity<StudyResponse> getStudyDetail(@PathVariable("studyId") Long studyId) {
+    try {
+      StudyResponse studyDetail = studentStudyService.getStudyDetail(studyId);
+      return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
+    } catch (CustomException e) { // study 가 없음
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 
   @Operation(summary = "스터디 수정", description = "스터디 정보를 수정합니다. 스터디장만 수정할 수 있습니다.")

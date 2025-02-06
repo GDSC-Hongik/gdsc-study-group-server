@@ -3,6 +3,7 @@ package com.gdgoc.study_group.study.application;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
 
 import com.gdgoc.study_group.exception.CustomException;
+import com.gdgoc.study_group.exception.ErrorCode;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
@@ -12,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.View;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentStudyService {
 
   public final StudyRepository studyRepository;
+  private final View error;
 
   /**
    * 스터디를 생성합니다.
@@ -74,9 +77,10 @@ public class StudentStudyService {
    * 스터디 상세 정보를 조회합니다.
    *
    * @param studyId 조회할 스터디 아이디
+   * @throws CustomException 스터디가 존재하지 않을 경우
    * @return 스터디 정보 반환
    */
-  public StudyResponse getStudyDetail(Long studyId) {
+  public StudyResponse getStudyDetail(Long studyId) throws CustomException {
     Study study =
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     return StudyResponse.from(study);
