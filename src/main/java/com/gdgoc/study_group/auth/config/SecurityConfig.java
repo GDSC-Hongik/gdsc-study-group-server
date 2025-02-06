@@ -2,6 +2,8 @@ package com.gdgoc.study_group.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdgoc.study_group.auth.application.RefreshTokenService;
+import com.gdgoc.study_group.auth.dao.RefreshRepository;
+import com.gdgoc.study_group.auth.jwt.CustomLogoutFilter;
 import com.gdgoc.study_group.auth.jwt.JwtFilter;
 import com.gdgoc.study_group.auth.jwt.JwtUtil;
 import com.gdgoc.study_group.auth.jwt.LoginFilter;
@@ -17,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -37,6 +40,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -81,6 +85,10 @@ public class SecurityConfig {
                 new LoginFilter(objectMapper ,authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenService),
                 UsernamePasswordAuthenticationFilter.class
         );
+
+        // CustomLogoutFilter 추가
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 
         // 세션을 stateless한 상태로 진행하기 위함
         http
