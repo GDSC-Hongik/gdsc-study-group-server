@@ -5,7 +5,7 @@ import com.gdgoc.study_group.round.dto.CreateRoundRequest;
 import com.gdgoc.study_group.round.dto.RoundDTO;
 import com.gdgoc.study_group.round.dto.UpdateRoundRequest;
 import com.gdgoc.study_group.round.application.RoundService;
-import com.gdgoc.study_group.roundMember.dto.RetrospectRequest;
+import com.gdgoc.study_group.roundMember.dto.RetrospectDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,7 +71,7 @@ public class RoundController {
   @PostMapping("/{roundId}/retrospects")
   public ResponseEntity<Void> createRetrospect(
           @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
-          @RequestBody RetrospectRequest request) {
+          @RequestBody RetrospectDTO request) {
 
     retrospectService.createRetrospect(roundId, request);
 
@@ -82,11 +82,39 @@ public class RoundController {
   @PatchMapping("/{roundId}/retrospects/{roundMemberId}")
   public ResponseEntity<Void> updateRetrospect(
           @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId,
-          @Parameter(description = "회고가 담긴 round member ID", required = true) @PathVariable Long roundMemberId,
-          @RequestBody RetrospectRequest request) {
+          @Parameter(description = "회고(round member) ID", required = true) @PathVariable Long roundMemberId,
+          @RequestBody RetrospectDTO request) {
 
     retrospectService.updateRetrospect(roundId, roundMemberId, request);
 
     return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "회고 삭제", description = "회고를 삭제합니다.")
+  @DeleteMapping("/{roundId}/retrospects/{roundMemberId}")
+  public ResponseEntity<Void> deleteRetrospect(
+          @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId,
+          @Parameter(description = "회고(round member) ID", required = true) @PathVariable Long roundMemberId) {
+
+    retrospectService.deleteRetrospect(roundId, roundMemberId);
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "특정 회고 조회", description = "특정 회고를 조회합니다.")
+  @GetMapping("/{roundId}/retrospects/{roundMemberId}")
+  public ResponseEntity<RetrospectDTO> getRetrospect(
+          @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId,
+          @Parameter(description = "회고(round member) ID", required = true) @PathVariable Long roundMemberId) {
+
+    return ResponseEntity.ok(retrospectService.getRetrospect(roundId, roundMemberId));
+  }
+
+  @Operation(summary = "모든 회고 조회", description = "특정 라운드의 모든 회고를 조회합니다.")
+  @GetMapping("/{roundId}/retrospects")
+  public ResponseEntity<List<RetrospectDTO>> getAllRetrospects(
+          @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId) {
+
+    return ResponseEntity.ok(retrospectService.getAllRetrospects(roundId));
   }
 }
