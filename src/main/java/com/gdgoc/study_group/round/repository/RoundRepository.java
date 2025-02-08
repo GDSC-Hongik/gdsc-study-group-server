@@ -15,12 +15,12 @@ import org.springframework.stereotype.Repository;
 public interface RoundRepository extends JpaRepository<Round, Long> {
   // ================ ROUND ================ //
   /**
-   * 특정 스터디의 모든 회차를 조회합니다
+   * 특정 스터디의 모든 회차를 생성일자순으로 조회합니다
    *
    * @param studyId 스터디 아이디
-   * @return 해당 스터디의 모든 회차 List
+   * @return 해당 스터디의 모든 회차 List (생성일자 오름차순)
    */
-  @Query("SELECT r FROM Round r WHERE r.study.id = :studyId")
+  @Query("SELECT r FROM Round r WHERE r.study.id = :studyId ORDER BY r.roundDate ASC")
   List<Round> findRoundsByStudyId(@Param("studyId") Long studyId);
 
   /**
