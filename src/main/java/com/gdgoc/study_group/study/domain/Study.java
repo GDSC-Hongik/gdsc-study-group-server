@@ -8,6 +8,8 @@ import com.gdgoc.study_group.day.dto.DayDTO;
 import com.gdgoc.study_group.round.domain.Round;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
