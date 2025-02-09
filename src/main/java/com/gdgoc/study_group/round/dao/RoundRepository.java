@@ -7,12 +7,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoundRepository extends JpaRepository<Round, Long> {
+public interface RoundRepository extends JpaRepository<Round, Long>, RoundCustomRepository {
   // ================ ROUND ================ //
   /**
    * 특정 스터디의 모든 회차를 조회합니다
@@ -42,7 +43,11 @@ public interface RoundRepository extends JpaRepository<Round, Long> {
   @Query("SELECT c FROM Comment c WHERE c.round.id = :roundId")
   List<Comment> findComments(@Param("roundId") Long roundId);
 
-  @Query("SELECT c FROM Comment c WHERE c.round.id = :roundId AND" + " c.member.id = :memberId")
-  Optional<Comment> findCommentByMemberId(
-      @Param("roundId") Long roundId, @Param("memberId") Long memberId);
+  @Query("SELECT c FROM Comment c WHERE c.round.id = :roundId AND c.id = :commentId")
+  Optional<Comment> findCommentByCommentId(
+      @Param("roundId") Long roundId, @Param("commentId") Long commentId);
+
+  @Modifying
+  @Query("DELETE FROM Comment c WHERE c.id = :commentId")
+  void deleteCommentById(@Param("commentId") Long commentId);
 }
