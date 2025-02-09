@@ -5,6 +5,7 @@ import com.gdgoc.study_group.curriculum.domain.Curriculum;
 import com.gdgoc.study_group.curriculum.dto.CurriculumDTO;
 import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.day.dto.DayDTO;
+import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.*;
@@ -34,7 +35,7 @@ public class Study {
   @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Day> days = new ArrayList<>();
 
-  @OneToMany(mappedBy = "study")
+  @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Answer> answers = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
@@ -46,6 +47,12 @@ public class Study {
   private String question; // 지원 질문, nullable: 지원 답변 없이 바로 신청 가능
   private Integer maxParticipants; // null == 인원 제한 X
   private Boolean isApplicationClosed = false; // 멤버 지원 종료 여부(기본값은 지원 가능)
+
+  public Answer addAnswer(Member member, String answer) {
+    Answer madeAns = Answer.MakeAnswer(member, this, answer);
+    answers.add(madeAns);
+    return madeAns;
+  }
 
   public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
     // 등록된 커리큘럼이 있다면 엔티티로 변환하여 리스트에 추가

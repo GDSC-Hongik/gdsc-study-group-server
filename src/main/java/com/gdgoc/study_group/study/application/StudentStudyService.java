@@ -1,9 +1,14 @@
 package com.gdgoc.study_group.study.application;
 
+import static com.gdgoc.study_group.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
+import static com.gdgoc.study_group.exception.ErrorCode.STUDY_QUESTION_NOT_FOUND;
 
+import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.exception.ErrorCode;
+import com.gdgoc.study_group.member.dao.MemberRepository;
+import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
@@ -21,7 +26,7 @@ import org.springframework.web.servlet.View;
 public class StudentStudyService {
 
   public final StudyRepository studyRepository;
-  private final View error;
+  private final MemberRepository memberRepository;
 
   /**
    * 스터디를 생성합니다.
@@ -84,5 +89,27 @@ public class StudentStudyService {
     Study study =
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     return StudyResponse.from(study);
+  }
+
+  /**
+   * 스터디에 지원합니다
+   * @param studyId 지원할 스터디 id
+   * @param memberId 지원할 멤버 id
+   * @param answer 답변
+   * @return 답변 id
+   * @throws CustomException 스터디 혹은 멤버가 없을 경우 반환
+   */
+  @Transactional(readOnly = false)
+  public Long StudyApply(Long studyId, Long memberId, String answer) throws CustomException {
+    Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+    Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+    String question = study.getQuestion();
+    if(question == null) {
+      throw new CustomException(STUDY_QUESTION_NOT_FOUND);
+    }
+    Answer addedAnswer = study.addAnswer(member, answer);
+    studyRepository.save(study);
+
+    return addedAnswer.getId();
   }
 }

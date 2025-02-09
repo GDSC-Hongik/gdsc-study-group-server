@@ -1,8 +1,10 @@
 package com.gdgoc.study_group.study.api;
 
 import com.gdgoc.study_group.exception.CustomException;
+import com.gdgoc.study_group.exception.ErrorCode;
 import com.gdgoc.study_group.study.application.LeaderStudyService;
 import com.gdgoc.study_group.study.application.StudentStudyService;
+import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,7 +53,7 @@ public class StudyController {
   @Operation(summary = "스터디 수정", description = "스터디 정보를 수정합니다. 스터디장만 수정할 수 있습니다.")
   @PatchMapping("/{studyId}")
   public ResponseEntity<Long> updateStudy(
-      @PathVariable("studyId") Long studyId, @RequestBody StudyCreateUpdateRequest updateRequest) {
+          @PathVariable("studyId") Long studyId, @RequestBody StudyCreateUpdateRequest updateRequest) {
 
     try {
       Long id = leaderStudyService.updateStudy(studyId, updateRequest);
@@ -67,8 +69,19 @@ public class StudyController {
     try {
       leaderStudyService.deleteStudy(studyId);
       return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
-    } catch(CustomException e) {
+    } catch (CustomException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+  }
+
+  // ****************** 스터디 지원 관련 ****************** //
+  @Operation(summary = "스터디 지원", description = "스터디에 지원합니다. 스터디 질문이 존재해야만 합니다.")
+  @PostMapping("/{studyId}/application")
+  public ResponseEntity<Long> applyStudy(@PathVariable("studyId") Long studyId, @RequestBody String answer) {
+    // TODO: auth 에서 member id 구하기
+    Long memberId = 777L;
+
+    Long applyId = studentStudyService.StudyApply(studyId, memberId, answer);
+    return ResponseEntity.status(HttpStatus.OK).body(applyId);
   }
 }
