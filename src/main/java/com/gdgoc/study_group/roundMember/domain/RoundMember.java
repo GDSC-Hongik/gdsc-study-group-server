@@ -43,12 +43,7 @@ public class RoundMember {
             .build();
   }
 
-  public void update(
-          Round round,
-          Member member,
-          String retrospect) {
-    this.round = round;
-    this.member = member;
+  public void update(String retrospect) {
     this.retrospect = retrospect;
   }
 }

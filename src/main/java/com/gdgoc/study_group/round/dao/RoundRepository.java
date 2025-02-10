@@ -6,6 +6,8 @@ import com.gdgoc.study_group.round.domain.Round;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -50,4 +52,16 @@ public interface RoundRepository extends JpaRepository<Round, Long>, RoundCustom
   @Modifying
   @Query("DELETE FROM Comment c WHERE c.id = :commentId")
   void deleteCommentById(@Param("commentId") Long commentId);
+
+
+  // ================ ROUND MEMBER ================ //
+  @Query("SELECT rm FROM RoundMember rm WHERE rm.round.id = :roundId AND rm.member.id = :memberId")
+  Optional<RoundMember> findRoundMember(@Param(("roundId")) Long roundId, @Param("memberId") Long memberId);
+
+  @Query("SELECT rm FROM RoundMember rm WHERE rm.round.id = :roundId")
+  List<RoundMember> findRoundMemberByRoundId(@Param("roundId") Long roundId);
+
+  @Modifying
+  @Query("DELETE FROM RoundMember rm WHERE rm.id = :roundMemberId")
+  void deleteRoundMemberById(@Param("roundMemberId") Long roundMemberId);
 }

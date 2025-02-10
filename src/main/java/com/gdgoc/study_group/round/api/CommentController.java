@@ -1,12 +1,13 @@
 package com.gdgoc.study_group.round.api;
 
-import com.gdgoc.study_group.comment.dto.CommentDto;
 import com.gdgoc.study_group.round.application.CommentService;
+import com.gdgoc.study_group.round.dto.CommentDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,19 +25,22 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<Map<String, Long>> createComment(
             @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
-            @RequestBody CommentDto request) {
+            @Parameter(description = "현재 인증된 사용자 정보", hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody CommentDTO comment) {
 
-        return ResponseEntity.ok(Map.of("comment_id", commentService.createComment(roundId, request)));
+        return ResponseEntity.ok(
+                Map.of("comment_id", commentService.createComment(roundId, userDetails.getUsername(), comment)));
     }
 
     @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
     @PatchMapping("/{commentId}")
     public ResponseEntity<Map<String, Long>> updateComment(
             @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
+            @Parameter(description = "현재 인증된 사용자 정보", hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "수정할 댓글 ID", required = true) @PathVariable Long commentId,
-            @RequestBody String updatedComment) {
+            @RequestBody CommentDTO updatedComment) {
 
-        commentService.updateComment(roundId, commentId, updatedComment);
+        commentService.updateComment(roundId, userDetails.getUsername(), commentId, updatedComment);
 
         return ResponseEntity.ok(Map.of("comment_id", commentId));
     }
@@ -45,16 +49,17 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
+            @Parameter(description = "현재 인증된 사용자 정보", hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "삭제할 댓글 ID", required = true) @PathVariable Long commentId) {
 
-        commentService.deleteComment(roundId, commentId);
+        commentService.deleteComment(roundId, userDetails.getUsername(), commentId);
 
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "특정 댓글 조회", description = "특정 댓글을 조회합니다.")
     @GetMapping("/{commentId}")
-    public ResponseEntity<CommentDto> getComment(
+    public ResponseEntity<CommentDTO> getComment(
             @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId,
             @Parameter(description = "조회할 댓글 ID", required = true) @PathVariable Long commentId) {
 
@@ -63,7 +68,7 @@ public class CommentController {
 
     @Operation(summary = "모든 댓글 조회", description = "회차의 모든 댓글을 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<CommentDto>> getAllComments(
+    public ResponseEntity<List<CommentDTO>> getAllComments(
             @Parameter(description = "회차 ID", required = true) @PathVariable Long roundId) {
 
         return ResponseEntity.ok(commentService.getAllComments(roundId));

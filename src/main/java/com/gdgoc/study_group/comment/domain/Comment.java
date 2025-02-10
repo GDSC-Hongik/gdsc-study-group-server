@@ -2,6 +2,7 @@ package com.gdgoc.study_group.comment.domain;
 
 import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
+import com.gdgoc.study_group.round.dto.CommentDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,7 +42,7 @@ public class Comment {
             .build();
   }
 
-  public void update(String comment) {
-    this.comment = comment;
+  public void update(CommentDTO comment) {
+    this.comment = comment.comment();
   }
 }
