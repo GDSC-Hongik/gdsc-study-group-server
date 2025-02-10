@@ -33,7 +33,7 @@ public class CommentService {
      * @return 생성한 댓글의 ID
      */
     @Transactional(readOnly = false)
-    public Long createComment(Long roundId, Long memberId, CommentDTO request) {
+    public Long createComment(Long roundId, Long memberId, CommentDTO request) throws CustomException {
 
         Round round = roundRepository.findById(roundId).orElseThrow(() -> new CustomException(ROUND_NOT_FOUND));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
@@ -54,7 +54,7 @@ public class CommentService {
      * @param request 수정할 댓글 내용
      */
     @Transactional(readOnly = false)
-    public void updateComment(Long roundId, Long memberId, Long commentId, CommentDTO request) {
+    public void updateComment(Long roundId, Long memberId, Long commentId, CommentDTO request) throws CustomException {
 
         Comment comment = roundRepository.findCommentByCommentId(roundId, commentId)
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
@@ -74,7 +74,7 @@ public class CommentService {
      * @param commentId 삭제할 댓글의 ID
      */
     @Transactional(readOnly = false)
-    public void deleteComment(Long roundId, Long memberId, Long commentId) {
+    public void deleteComment(Long roundId, Long memberId, Long commentId) throws CustomException {
 
         Comment comment = roundRepository.findCommentByCommentId(roundId, commentId)
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
@@ -91,7 +91,7 @@ public class CommentService {
      * @param commentId 조회할 댓글의 ID
      * @return 댓글 내용
      */
-    public CommentDTO getComment(Long roundId, Long commentId) {
+    public CommentDTO getComment(Long roundId, Long commentId) throws CustomException {
 
         return CommentDTO.from(roundRepository.findCommentByCommentId(roundId, commentId)
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND)));

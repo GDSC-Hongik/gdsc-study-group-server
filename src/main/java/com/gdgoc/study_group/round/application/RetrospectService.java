@@ -31,7 +31,7 @@ public class RetrospectService {
      * @param request 멤버 아이디와 회고 내용
      */
     @Transactional(readOnly = false)
-    public Long createRetrospect(Long roundId, Long memberId, RetrospectRequest request) {
+    public Long createRetrospect(Long roundId, Long memberId, RetrospectRequest request) throws CustomException {
 
         Round round = roundRepository.findById(roundId)
                 .orElseThrow(() -> new CustomException(ROUND_NOT_FOUND));
@@ -56,7 +56,7 @@ public class RetrospectService {
      * @param request 멤버의 아이디, 수정할 회고의 내용
      */
     @Transactional(readOnly = false)
-    public Long updateRetrospect(Long roundId, Long memberId, RetrospectRequest request) {
+    public Long updateRetrospect(Long roundId, Long memberId, RetrospectRequest request) throws CustomException {
 
         RoundMember roundMember = roundRepository.findRoundMember(roundId, memberId)
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
@@ -75,7 +75,7 @@ public class RetrospectService {
      * @param roundId 수정할 회고의 회차 ID
      */
     @Transactional(readOnly = false)
-    public void deleteRetrospect(Long roundId, Long memberId) {
+    public void deleteRetrospect(Long roundId, Long memberId) throws CustomException {
 
         RoundMember roundMember = roundRepository.findRoundMember(roundId, memberId)
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
@@ -91,7 +91,7 @@ public class RetrospectService {
      * @param roundId 조회할 회고의 라운드 ID
      * @return 해당 회고를 작성한 멤버의 아이디와 회고 내용
      */
-    public RetrospectResponse getRetrospect(Long roundId, Long memberId) {
+    public RetrospectResponse getRetrospect(Long roundId, Long memberId) throws CustomException {
 
         RoundMember roundMember = roundRepository.findRoundMember(roundId, memberId)
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
