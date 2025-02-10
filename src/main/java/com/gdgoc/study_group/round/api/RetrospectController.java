@@ -21,6 +21,7 @@ public class RetrospectController {
 
     private final RetrospectService retrospectService;
 
+    //TODO: 예외 처리 구체화
     @Operation(summary = "회고 작성", description = "스터디를 참여한 멤버들이 회고를 작성합니다.")
     @PostMapping
     public ResponseEntity<Map<String, Long>> createRetrospect(

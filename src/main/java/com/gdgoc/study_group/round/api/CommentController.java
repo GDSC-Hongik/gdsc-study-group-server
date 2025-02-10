@@ -21,6 +21,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    //TODO: 예외처리 구체화
     @Operation(summary = "댓글 작성", description = "댓글을 작성합니다.")
     @PostMapping
     public ResponseEntity<Map<String, Long>> createComment(
