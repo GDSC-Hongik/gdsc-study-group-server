@@ -1,10 +1,9 @@
-package com.gdgoc.study_group.round.controller;
+package com.gdgoc.study_group.round.api;
 
 import com.gdgoc.study_group.round.dto.CreateRoundRequest;
 import com.gdgoc.study_group.round.dto.RoundDTO;
-import com.gdgoc.study_group.round.dto.RoundThumbnailDTO;
 import com.gdgoc.study_group.round.dto.UpdateRoundRequest;
-import com.gdgoc.study_group.round.service.RoundService;
+import com.gdgoc.study_group.round.application.RoundService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,7 +20,6 @@ import java.util.List;
 public class RoundController {
 
   private final RoundService roundService;
-
   @GetMapping
   @Operation(summary = "특정 스터디의 모든 회차 조회", description = "특정 스터디의 모든 회차 정보를 조회합니다.")
   public ResponseEntity<List<RoundDTO>> getRoundsByStudy(

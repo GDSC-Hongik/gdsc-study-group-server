@@ -1,20 +1,18 @@
-package com.gdgoc.study_group.round.service;
+package com.gdgoc.study_group.round.application;
 
 import com.gdgoc.study_group.round.domain.Round;
 import com.gdgoc.study_group.round.domain.RoundThumbnail;
 import com.gdgoc.study_group.round.dto.CreateRoundRequest;
 import com.gdgoc.study_group.round.dto.RoundDTO;
-import com.gdgoc.study_group.round.dto.RoundThumbnailDTO;
 import com.gdgoc.study_group.round.dto.UpdateRoundRequest;
-import com.gdgoc.study_group.round.repository.RoundRepository;
-import com.gdgoc.study_group.round.repository.RoundThumbnailRepository;
+import com.gdgoc.study_group.round.dao.RoundRepository;
+import com.gdgoc.study_group.round.dao.RoundThumbnailRepository;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
