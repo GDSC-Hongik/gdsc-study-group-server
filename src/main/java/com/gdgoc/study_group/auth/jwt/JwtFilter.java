@@ -60,11 +60,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         /* 세션에 잠깐 담아둘 정보 관리 */
         // 토큰에서 사용자 정보 추출
+        Long authId = jwtUtil.getAuthId(token);
         String studentNumber = jwtUtil.getStudentNumber(token);
         String role = jwtUtil.getRole(token);
 
         // 사용자 정보 DTO 생성
         AuthInfoDto authInfoDto = AuthInfoDto.builder()
+                .authId(authId)
                 .studentNumber(studentNumber)
                 .role(role)
                 .build();

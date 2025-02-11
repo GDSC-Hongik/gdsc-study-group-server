@@ -27,6 +27,17 @@ public class JwtUtil {
 
     }
 
+    public Long getAuthId(String token) {
+        // authId 검증
+
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("authId", Long.class);
+    }
+
     public String getStudentNumber(String token) {
         // studentNumber 검증
 
@@ -46,10 +57,11 @@ public class JwtUtil {
     }
 
     /* 토큰 생성 */
-    public String createJWT(String category, String studentNumber, String role, Long expiredMs) {
+    public String createJWT(String category, Long authId, String studentNumber, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category) // access, refresh token 구분
+                .claim("authId", authId)
                 .claim("studentNumber", studentNumber)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))

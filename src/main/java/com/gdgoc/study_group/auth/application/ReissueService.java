@@ -54,10 +54,11 @@ public class ReissueService {
          * refresh token 검증을 마치면,
          * 새로운 access token을 발급합니다.
          */
+        Long authId = jwtUtil.getAuthId(refresh);
         String studentNumber = jwtUtil.getStudentNumber(refresh);
         String role = jwtUtil.getRole(refresh);
 
-        String newAccess = jwtUtil.createJWT("access", studentNumber, role, 600000L);
+        String newAccess = jwtUtil.createJWT("access", authId, studentNumber, role, 600000L);
 
         // 응답
         response.setHeader("Authorization", "Bearer " + newAccess);
