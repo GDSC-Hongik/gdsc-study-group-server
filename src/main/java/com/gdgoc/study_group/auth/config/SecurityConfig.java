@@ -1,6 +1,7 @@
 package com.gdgoc.study_group.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdgoc.study_group.auth.application.CookieService;
 import com.gdgoc.study_group.auth.application.RefreshTokenService;
 import com.gdgoc.study_group.auth.dao.RefreshRepository;
 import com.gdgoc.study_group.auth.jwt.CustomLogoutFilter;
@@ -41,6 +42,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final CookieService cookieService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -87,9 +89,9 @@ public class SecurityConfig {
                 UsernamePasswordAuthenticationFilter.class
         );
 
-        // CustomLogoutFilter 추가
+        // 기존 LogoutFilter 대신 CustomLogoutFilter 실행되도록 추가
         http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository, cookieService), LogoutFilter.class);
 
         // 세션을 stateless한 상태로 진행하기 위함
         http

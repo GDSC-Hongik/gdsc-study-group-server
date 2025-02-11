@@ -1,6 +1,7 @@
 package com.gdgoc.study_group.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdgoc.study_group.auth.application.CookieService;
 import com.gdgoc.study_group.auth.application.RefreshTokenService;
 import com.gdgoc.study_group.auth.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
@@ -29,12 +30,14 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final CookieService cookieService;
 
     public LoginFilter(ObjectMapper objectMapper, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
         super(LOGIN_URL, authenticationManager);
         this.objectMapper = objectMapper;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.cookieService = new CookieService();
     }
 
     /**
@@ -91,7 +94,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
         Integer expireS = 24 * 60 * 60;
         String refresh = jwtUtil.createJWT("refresh", authId, studentNumber, role, expireS * 1000L);
-        response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
+        cookieService.createCookie(response, "refresh", refresh, expireS);
 
         // refresh token을 db에 저장
         refreshTokenService.saveRefresh(authId, refresh, expireS * 1000L);

@@ -1,5 +1,6 @@
 package com.gdgoc.study_group.auth.jwt;
 
+import com.gdgoc.study_group.auth.application.CookieService;
 import com.gdgoc.study_group.auth.dao.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -19,6 +20,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final CookieService cookieService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
@@ -90,9 +92,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
         refreshRepository.deleteByRefresh(refresh);
 
         // 리프레쉬 토큰의 쿠키 값 비움
-        Cookie cookie = CookieUtil.createCookie("refresh", null, 0);
+        cookieService.createCookie(response, "refresh", null, 0);
 
-        response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }
