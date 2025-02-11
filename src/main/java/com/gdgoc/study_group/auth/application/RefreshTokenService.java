@@ -35,12 +35,10 @@ public class RefreshTokenService {
         refreshRepository.deleteByAuth(auth);
         refreshRepository.flush();
 
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
-
         Refresh refreshAuth = Refresh.builder()
                 .auth(auth)
                 .refresh(refreshToken)
-                .expiration(date.toString())
+                .expiration(new Date(System.currentTimeMillis() + expiredMs).toString())
                 .build();
 
         refreshRepository.save(refreshAuth);

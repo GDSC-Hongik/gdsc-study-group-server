@@ -68,11 +68,6 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     /**
      * 로그인 인증 성공 시, 아래 메소드가 실행됩니다.
      * 이후, JWTUtil에서 JWT가 발급됩니다.
-     *
-     * @param request
-     * @param response
-     * @param chain
-     * @param authentication
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
@@ -91,14 +86,15 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtUtil.createJWT("access", studentNumber, role, 600000L);
-        String refresh = jwtUtil.createJWT("refresh", studentNumber, role, 86400000L);
+        String access = jwtUtil.createJWT("access", authId, studentNumber, role, 60 * 10 * 1000L);
+        response.setHeader("Authorization", "Bearer " + access);
+
+        Integer expireS = 24 * 60 * 60;
+        String refresh = jwtUtil.createJWT("refresh", authId, studentNumber, role, expireS * 1000L);
+        response.addCookie(CookieUtil.createCookie("refresh", refresh, expireS));
 
         // refresh token을 db에 저장
-        refreshTokenService.saveRefresh(authId, refresh, 86400000L);
-
-        response.setHeader("Authorization", "Bearer " + access);
-        response.addCookie(CookieUtil.createCookie("refresh", refresh));
+        refreshTokenService.saveRefresh(authId, refresh, expireS * 1000L);
 
         response.setStatus(HttpStatus.OK.value());
     }
