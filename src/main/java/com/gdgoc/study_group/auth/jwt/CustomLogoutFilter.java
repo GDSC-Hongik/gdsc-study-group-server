@@ -90,11 +90,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         refreshRepository.deleteByRefresh(refresh);
 
         // 리프레쉬 토큰의 쿠키 값 비움
-        Cookie cookie = new Cookie("refresh", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/"); // 쿠키가 브라우저에서 유효하게 사용될 수 있는 경로 범위 지정
-//        cookie.setSecure(true); // HTTPS 환경에서만 전송
-//        cookie.setHttpOnly(true); // JavaScript 접근 방지
+        Cookie cookie = CookieUtil.createCookie("refresh", null, 0);
 
         response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
