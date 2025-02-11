@@ -38,4 +38,15 @@ public class StudyMember {
 
   @Enumerated(EnumType.STRING)
   private StudyMemberStatus studyMemberStatus;
+  private String answer;
+
+  //============== answer ==============//
+  public void updateAnswer(String answer) {
+    this.answer = answer;
+  }
+
+  //============== apply ==============//
+  public void cancelApply() {
+    this.studyMemberStatus = StudyMemberStatus.CANCELED;
+  }
 }

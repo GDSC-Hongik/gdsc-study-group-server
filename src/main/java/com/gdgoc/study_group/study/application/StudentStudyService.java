@@ -1,14 +1,12 @@
 package com.gdgoc.study_group.study.application;
 
-import static com.gdgoc.study_group.exception.ErrorCode.ANSWER_TOO_MANY;
-import static com.gdgoc.study_group.exception.ErrorCode.INTERNAL_SERVER_ERROR;
+import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_MEMBER;
+import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_QUESTION;
+import static com.gdgoc.study_group.exception.ErrorCode.APPLY_TOO_MANY;
 import static com.gdgoc.study_group.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
-import static com.gdgoc.study_group.exception.ErrorCode.STUDY_QUESTION_NOT_FOUND;
 
-import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.exception.CustomException;
-import com.gdgoc.study_group.exception.ErrorCode;
 import com.gdgoc.study_group.member.dao.MemberRepository;
 import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.study.dao.StudyRepository;
@@ -16,12 +14,10 @@ import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
-import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.View;
 
 @Service
 @RequiredArgsConstructor
@@ -101,39 +97,36 @@ public class StudentStudyService {
    * <strong>답변의 존재 여부와 관계없이 같은 study, member id 조합은 1개여야합니다</strong>
    * @param studyId 지원할 스터디 id
    * @param memberId 지원할 멤버 id
-   * @param answer 답변
-   * @return 답변 id
+   * @param answer 답변, nullable
    * @throws CustomException </br> {@code STUDY_NOT_FOUND}, {@code MEMBER_NOT_FOUND}, </br>
-   * {@code STUDY_QUESTION_NOT_FOUND}: 각각 해당하는 정보가 없습니다 </br>
-   * {@code ANSWER_TOO_MANY}: 답변이 이미 존재합니다 </br>
-   * {@code INTERNAL_SERVER_ERROR}: 답변이 저장되지 않았습니다 </br>
+   * {@code APPLY_NO_QUESTION}: 각각 해당하는 정보가 없습니다 </br>
+   * {@code ANSWER_TOO_MANY}: 지원이 이미 존재합니다 </br>
    */
   @Transactional(readOnly = false)
-  public Long StudyApply(Long studyId, Long memberId, String answer) throws CustomException {
-    // validate request
+  public void StudyApply(Long studyId, Long memberId, String answer) throws CustomException {
     Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-    String question = study.getQuestion();
-    if(question == null && answer != null) {
-      throw new CustomException(STUDY_QUESTION_NOT_FOUND);
+
+    // validate
+    List<StudyMember> memberInfos = studyRepository.findMemberInfo(studyId, memberId);
+    if(!memberInfos.isEmpty()) {
+      throw new CustomException(APPLY_TOO_MANY);
+    }
+    if(study.getQuestion() == null && answer != null) {
+      throw new CustomException(APPLY_NO_QUESTION);
     }
 
-    // add answer
-    study.addAnswer(member, answer);
+    // make apply info
+    StudyMember studyMember = StudyMember.builder()
+            .study(study)
+            .member(member)
+            .answer(answer)
+            .studyMemberStatus(StudyMemberStatus.WAITING)
+            .build();
+
+    // save
+    study.addStudyMember(studyMember);
     studyRepository.save(study);
-
-    // find added answer
-    List<Answer> ans = studyRepository.findMemberAnswer(studyId, memberId);
-
-    // validate answer
-    if(ans == null) {
-      throw new CustomException(INTERNAL_SERVER_ERROR);
-    }
-    if(ans.size() > 1) {
-      throw new CustomException(ANSWER_TOO_MANY);
-    }
-
-    return ans.get(0).getId();
   }
 
   /**
@@ -141,14 +134,24 @@ public class StudentStudyService {
    * @param studyId 취소할 스터디 id
    * @param memberId 취소할 멤버 id
    * @throws CustomException <br>
-   * {@code STUDY_NOT_FOUND}, {@code MEMBER_NOT_FOUND}: 각각 해당하는 정보가 없습니다 </br>
+   * {@code STUDY_NOT_FOUND}: 해당하는 스터디 정보가 없습니다 </br>
+   * {@code APPLY_NO_MEMBER}: 해당하는 지원 정보가 없습니다 </br>
+   * {@code APPLY_TOO_MANY}: 해당하는 지원 정보가 너무 많습니다 </br>
    */
   @Transactional(readOnly = false)
   public void cancelApply(Long studyId, Long memberId) throws CustomException {
     Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
-    memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+    List<StudyMember> studyMembers = study.findStudyMembers(memberId);
 
-    study.clearAnswer();
+    // validate
+    if(studyMembers.isEmpty()) {
+      throw new CustomException(APPLY_NO_MEMBER);
+    }
+    if(studyMembers.size() > 1) {
+      throw new CustomException(APPLY_TOO_MANY);
+    }
+
+    studyMembers.get(0).cancelApply();
     studyRepository.save(study);
   }
 }

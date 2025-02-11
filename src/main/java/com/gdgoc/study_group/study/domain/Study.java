@@ -1,11 +1,9 @@
 package com.gdgoc.study_group.study.domain;
 
-import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.curriculum.domain.Curriculum;
 import com.gdgoc.study_group.curriculum.dto.CurriculumDTO;
 import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.day.dto.DayDTO;
-import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import jakarta.persistence.*;
@@ -23,7 +21,7 @@ public class Study {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToMany(mappedBy = "study", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<StudyMember> studyMembers = new ArrayList<>();
 
   @OneToMany(mappedBy = "study")
@@ -35,9 +33,6 @@ public class Study {
   @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Day> days = new ArrayList<>();
 
-  @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Answer> answers = new ArrayList<>();
-
   @Enumerated(EnumType.STRING)
   private StudyStatus studyStatus;
 
@@ -48,13 +43,13 @@ public class Study {
   private Integer maxParticipants; // null == 인원 제한 X
   private Boolean isApplicationClosed = false; // 멤버 지원 종료 여부(기본값은 지원 가능)
 
-  public Answer addAnswer(Member member, String answer) {
-    Answer madeAns = Answer.MakeAnswer(member, this, answer);
-    answers.add(madeAns);
-    return madeAns;
+  public void addStudyMember(StudyMember studyMember) {
+    studyMembers.add(studyMember);
   }
-  public void clearAnswer() {
-    answers.clear();
+  public List<StudyMember> findStudyMembers(Long studentId) {
+    return studyMembers.stream()
+            .filter(studyMember -> studyMember.getMember().getId().equals(studentId))
+            .toList();
   }
 
   public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
