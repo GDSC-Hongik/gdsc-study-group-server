@@ -96,6 +96,8 @@ public class StudentStudyService {
 
   /**
    * 스터디에 지원합니다
+   * 질문이 없는 경우, 답변에 null 로 저장됩니다 <br>
+   * <strong>답변의 존재 여부와 관계없이 같은 study, member id 조합은 1개여야합니다</strong>
    * @param studyId 지원할 스터디 id
    * @param memberId 지원할 멤버 id
    * @param answer 답변
@@ -111,7 +113,7 @@ public class StudentStudyService {
     Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     String question = study.getQuestion();
-    if(question == null) {
+    if(question == null && answer != null) {
       throw new CustomException(STUDY_QUESTION_NOT_FOUND);
     }
 
@@ -121,6 +123,8 @@ public class StudentStudyService {
 
     // find added answer
     List<Answer> ans = studyRepository.findMemberAnswer(studyId, memberId);
+
+    // validate answer
     if(ans == null) {
       throw new CustomException(INTERNAL_SERVER_ERROR);
     }
