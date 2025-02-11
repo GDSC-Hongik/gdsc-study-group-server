@@ -13,6 +13,9 @@ public enum ErrorCode {
   STUDY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 스터디입니다."),
   STUDY_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "지원 질문이 존재하지 않습니다."),
 
+  // answer
+  ANSWER_TOO_MANY(HttpStatus.BAD_REQUEST, "답변은 하나만 등록가능합니다."),
+
   // member
   MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다.")
   ;

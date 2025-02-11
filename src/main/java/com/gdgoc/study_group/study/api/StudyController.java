@@ -62,11 +62,11 @@ public class StudyController {
   // ****************** 스터디 지원 관련 ****************** //
   @Operation(summary = "스터디 지원", description = "스터디에 지원합니다. 스터디 질문이 존재해야만 합니다.")
   @PostMapping("/{studyId}/application")
-  public ResponseEntity<Long> applyStudy(@PathVariable("studyId") Long studyId, @RequestBody String answer) {
+  public ResponseEntity<Long> applyStudy(@PathVariable("studyId") Long studyId, @RequestBody ApplicationRequest request) {
     // TODO: auth 에서 member id 구하기
     Long memberId = 777L;
 
-    Long applyId = studentStudyService.StudyApply(studyId, memberId, answer);
+    Long applyId = studentStudyService.StudyApply(studyId, memberId, request.answer());
     return ResponseEntity.status(HttpStatus.OK).body(applyId);
   }
 }

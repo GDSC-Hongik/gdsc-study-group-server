@@ -69,4 +69,15 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
    */
   @Query("SELECT a FROM Answer a WHERE a.study.id = :studyId")
   List<Answer> findAnswers(@Param("studyId") Long studyId);
+
+  /**
+   * 특정 멤버의 스터디에 대한 답변들을 반환합니다
+   * 일반적으로 1개이하여야 합니다
+   * @param studyId
+   * @param memberId
+   * @return 해당하는 답변을 반환합니다. 일반적으로 1개이하입니다
+   */
+  @Query("SELECT a FROM Answer a WHERE a.study.id = :studyId AND "
+          + "a.member.id = :memberId")
+  List<Answer> findMemberAnswer(@Param("studyId") Long studyId, @Param("memberId") Long memberId);
 }

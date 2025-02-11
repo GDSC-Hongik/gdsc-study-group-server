@@ -1,5 +1,7 @@
 package com.gdgoc.study_group.study.application;
 
+import static com.gdgoc.study_group.exception.ErrorCode.ANSWER_TOO_MANY;
+import static com.gdgoc.study_group.exception.ErrorCode.INTERNAL_SERVER_ERROR;
 import static com.gdgoc.study_group.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_QUESTION_NOT_FOUND;
@@ -14,6 +16,7 @@ import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.*;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -97,19 +100,34 @@ public class StudentStudyService {
    * @param memberId 지원할 멤버 id
    * @param answer 답변
    * @return 답변 id
-   * @throws CustomException 스터디 혹은 멤버가 없을 경우 반환
+   * @throws CustomException </br> {@code STUDY_NOT_FOUND}, {@code MEMBER_NOT_FOUND}, </br>
+   * {@code STUDY_QUESTION_NOT_FOUND}: 각각 해당하는 정보가 없습니다 </br>
+   * {@code ANSWER_TOO_MANY}: 답변이 이미 존재합니다 </br>
+   * {@code INTERNAL_SERVER_ERROR}: 답변이 저장되지 않았습니다 </br>
    */
   @Transactional(readOnly = false)
   public Long StudyApply(Long studyId, Long memberId, String answer) throws CustomException {
+    // validate request
     Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     String question = study.getQuestion();
     if(question == null) {
       throw new CustomException(STUDY_QUESTION_NOT_FOUND);
     }
-    Answer addedAnswer = study.addAnswer(member, answer);
+
+    // add answer
+    study.addAnswer(member, answer);
     studyRepository.save(study);
 
-    return addedAnswer.getId();
+    // find added answer
+    List<Answer> ans = studyRepository.findMemberAnswer(studyId, memberId);
+    if(ans == null) {
+      throw new CustomException(INTERNAL_SERVER_ERROR);
+    }
+    if(ans.size() > 1) {
+      throw new CustomException(ANSWER_TOO_MANY);
+    }
+
+    return ans.get(0).getId();
   }
 }
