@@ -1,10 +1,7 @@
 package com.gdgoc.study_group.study.api;
 
-import com.gdgoc.study_group.exception.CustomException;
-import com.gdgoc.study_group.exception.ErrorCode;
 import com.gdgoc.study_group.study.application.LeaderStudyService;
 import com.gdgoc.study_group.study.application.StudentStudyService;
-import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,12 +39,8 @@ public class StudyController {
   @Operation(summary = "개별 스터디 조회", description = "스터디 하나의 정보를 조회합니다.")
   @GetMapping("/{studyId}")
   public ResponseEntity<StudyResponse> getStudyDetail(@PathVariable("studyId") Long studyId) {
-    try {
-      StudyResponse studyDetail = studentStudyService.getStudyDetail(studyId);
-      return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
-    } catch (CustomException e) { // study 가 없음
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    StudyResponse studyDetail = studentStudyService.getStudyDetail(studyId);
+    return ResponseEntity.status(HttpStatus.OK).body(studyDetail);
   }
 
   @Operation(summary = "스터디 수정", description = "스터디 정보를 수정합니다. 스터디장만 수정할 수 있습니다.")
@@ -55,23 +48,15 @@ public class StudyController {
   public ResponseEntity<Long> updateStudy(
           @PathVariable("studyId") Long studyId, @RequestBody StudyCreateUpdateRequest updateRequest) {
 
-    try {
-      Long id = leaderStudyService.updateStudy(studyId, updateRequest);
-      return ResponseEntity.status(HttpStatus.OK).body(id);
-    } catch (CustomException e) { // 스터디가 없을 경우
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    Long id = leaderStudyService.updateStudy(studyId, updateRequest);
+    return ResponseEntity.status(HttpStatus.OK).body(id);
   }
 
   @Operation(summary = "스터디 삭제", description = "스터디를 삭제합니다. 스터디장만 삭제할 수 있습니다.")
   @DeleteMapping("/{studyId}")
   public ResponseEntity<Void> deleteStudy(@PathVariable("studyId") Long studyId) {
-    try {
-      leaderStudyService.deleteStudy(studyId);
-      return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
-    } catch (CustomException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    leaderStudyService.deleteStudy(studyId);
+    return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
   }
 
   // ****************** 스터디 지원 관련 ****************** //
