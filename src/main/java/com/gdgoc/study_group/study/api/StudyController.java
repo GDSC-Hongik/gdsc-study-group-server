@@ -69,4 +69,14 @@ public class StudyController {
     Long applyId = studentStudyService.StudyApply(studyId, memberId, request.answer());
     return ResponseEntity.status(HttpStatus.OK).body(applyId);
   }
+
+  @Operation(summary = "스터디 지원 취소", description = "스터디 지원을 취소합니다")
+  @DeleteMapping("/{studyId}/application")
+  public ResponseEntity<Void> applyCancel(@PathVariable("studyId") Long studyId) {
+    // TODO: auth 에서 member id 구하기
+    Long memberId = 777L;
+
+    studentStudyService.cancelApply(studyId, memberId);
+    return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
+  }
 }

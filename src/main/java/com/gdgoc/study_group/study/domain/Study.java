@@ -53,6 +53,9 @@ public class Study {
     answers.add(madeAns);
     return madeAns;
   }
+  public void clearAnswer() {
+    answers.clear();
+  }
 
   public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
     // 등록된 커리큘럼이 있다면 엔티티로 변환하여 리스트에 추가

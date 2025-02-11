@@ -28,7 +28,7 @@ import org.springframework.web.servlet.View;
 @Transactional(readOnly = true)
 public class StudentStudyService {
 
-  public final StudyRepository studyRepository;
+  private final StudyRepository studyRepository;
   private final MemberRepository memberRepository;
 
   /**
@@ -94,6 +94,7 @@ public class StudentStudyService {
     return StudyResponse.from(study);
   }
 
+  //============== apply ==============//
   /**
    * 스터디에 지원합니다
    * 질문이 없는 경우, 답변에 null 로 저장됩니다 <br>
@@ -133,5 +134,21 @@ public class StudentStudyService {
     }
 
     return ans.get(0).getId();
+  }
+
+  /**
+   * 지원을 취소합니다
+   * @param studyId 취소할 스터디 id
+   * @param memberId 취소할 멤버 id
+   * @throws CustomException <br>
+   * {@code STUDY_NOT_FOUND}, {@code MEMBER_NOT_FOUND}: 각각 해당하는 정보가 없습니다 </br>
+   */
+  @Transactional(readOnly = false)
+  public void cancelApply(Long studyId, Long memberId) throws CustomException {
+    Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+    memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+    study.clearAnswer();
+    studyRepository.save(study);
   }
 }
