@@ -43,6 +43,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final CookieService cookieService;
+    private final RefreshTokenService refreshTokenService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -91,7 +92,7 @@ public class SecurityConfig {
 
         // 기존 LogoutFilter 대신 CustomLogoutFilter 실행되도록 추가
         http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository, cookieService), LogoutFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository, cookieService, refreshTokenService), LogoutFilter.class);
 
         // 세션을 stateless한 상태로 진행하기 위함
         http

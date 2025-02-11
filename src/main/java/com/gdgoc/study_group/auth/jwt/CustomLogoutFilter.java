@@ -1,8 +1,8 @@
 package com.gdgoc.study_group.auth.jwt;
 
 import com.gdgoc.study_group.auth.application.CookieService;
+import com.gdgoc.study_group.auth.application.RefreshTokenService;
 import com.gdgoc.study_group.auth.dao.RefreshRepository;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -20,6 +20,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final CookieService cookieService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
@@ -51,30 +52,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         // 리프레쉬 토큰 검증
         String refresh = cookieService.extractCookie(request, "refresh");
 
-        if (refresh == null) {
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        try {
-            jwtUtil.isExpired(refresh);
-        } catch (ExpiredJwtException e) {
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String category = jwtUtil.getCategory(refresh);
-        if (!category.equals("refresh")) {
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        Boolean isExist = refreshRepository.existsByRefresh(refresh);
-        if (!isExist) {
-
+        if (!refreshTokenService.validateRefresh(refresh)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

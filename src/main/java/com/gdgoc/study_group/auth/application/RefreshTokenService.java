@@ -4,19 +4,23 @@ import com.gdgoc.study_group.auth.dao.AuthRepository;
 import com.gdgoc.study_group.auth.dao.RefreshRepository;
 import com.gdgoc.study_group.auth.domain.Auth;
 import com.gdgoc.study_group.auth.domain.Refresh;
-import jakarta.transaction.Transactional;
+import com.gdgoc.study_group.auth.jwt.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RefreshTokenService {
 
     private final RefreshRepository refreshRepository;
     private final AuthRepository authRepository;
+    private final JwtUtil jwtUtil;
 
     /**
      * 로그인 시 생성되는 리프레쉬 토큰을 데이터베이스에 저장합니다.
@@ -25,7 +29,7 @@ public class RefreshTokenService {
      * @param refreshToken 저장하려는 리프레쉬 토큰
      * @param expiredMs 저장하려는 리프레쉬 토큰의 만료 시간
      */
-    @Transactional
+    @Transactional(readOnly = false)
     public void saveRefresh(Long authId, String refreshToken, Long expiredMs) {
 
         Auth auth = authRepository.findById(authId)
@@ -42,5 +46,31 @@ public class RefreshTokenService {
                 .build();
 
         refreshRepository.save(refreshAuth);
+    }
+
+    /**
+     * refresh token이 유효한지 검증합니다.
+     * @param refreshToken 검증할 리프레쉬 토큰
+     * @return 올바르면 true (단, 유효하지 않은 토큰일 경우 false)
+     */
+    public boolean validateRefresh(String refreshToken) {
+
+        try {
+            if (refreshToken == null) {
+                return false;
+            }
+
+            jwtUtil.isExpired(refreshToken);
+
+            String category = jwtUtil.getCategory(refreshToken);
+            if (!"refresh".equals(category)) {
+                return false;
+            }
+
+            return refreshRepository.existsByRefresh(refreshToken);
+
+        } catch (ExpiredJwtException e) {
+            return false;
+        }
     }
 }
