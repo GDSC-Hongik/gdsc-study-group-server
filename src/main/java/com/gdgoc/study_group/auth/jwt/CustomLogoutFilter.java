@@ -7,7 +7,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -50,14 +49,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         // 리프레쉬 토큰 검증
-        String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
-        }
+        String refresh = cookieService.extractCookie(request, "refresh");
 
         if (refresh == null) {
 

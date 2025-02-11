@@ -14,22 +14,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReissueService {
     private final JwtUtil jwtUtil;
+    private final CookieService cookieService;
 
     public ResponseEntity<?> reissueToken(HttpServletRequest request, HttpServletResponse response) {
 
-        String refresh = null;
-
-        /**
-         * 요청에서 refresh 쿠키를 찾아서,
-         * 해당 값의 null 여부를 확인합니다.
-         */
-        Cookie[] cookies = request.getCookies();
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
-        }
+        // 요청에서 refresh 쿠키를 추출하는 메서드 호출
+        String refresh = cookieService.extractCookie(request, "refresh");
 
         if (refresh == null) {
             return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
