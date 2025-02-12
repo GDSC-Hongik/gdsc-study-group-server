@@ -167,7 +167,7 @@ public class StudentStudyService {
   @Transactional(readOnly = false)
   public void cancelApply(Long studyId, Long memberId) throws CustomException {
     Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
-    List<StudyMember> studyMembers = study.findStudyMembers(memberId);
+    List<StudyMember> studyMembers = studyRepository.findStudyMembersWithStatus(studyId, StudyMemberStatus.WAITING);
 
     // validate
     if(studyMembers.isEmpty()) {

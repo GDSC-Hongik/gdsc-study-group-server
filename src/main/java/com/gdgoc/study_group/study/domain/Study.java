@@ -46,11 +46,6 @@ public class Study {
   public void addStudyMember(StudyMember studyMember) {
     studyMembers.add(studyMember);
   }
-  public List<StudyMember> findStudyMembers(Long studentId) {
-    return studyMembers.stream()
-            .filter(studyMember -> studyMember.getMember().getId().equals(studentId))
-            .toList();
-  }
 
   public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
     // 등록된 커리큘럼이 있다면 엔티티로 변환하여 리스트에 추가
