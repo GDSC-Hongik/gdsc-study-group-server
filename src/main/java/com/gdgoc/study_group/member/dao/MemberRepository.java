@@ -13,6 +13,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
   /**
+   * 멤버 정보를 바탕으로 해당하는 멤버 객체를 반환한다
+   * @param name: 해당 멤버의 이름
+   * @param studentNumber: 해당 멤버의 학번
+   * @param github: 해당 멤버의 깃허브 링크
+   * @return 찾은 멤버 객체(1개만 존재해야 함)
+   * @see Member
+   */
+  @Query("SELECT m FROM Member m WHERE m.name = :name AND "
+          + "m.studentNumber = :studentNumber AND "
+          + "m.github = :github")
+  Member findMember(@Param("name") String name, @Param("studentNumber") String studentNumber,
+                          @Param("github") String github);
+
+  /**
    * 해당 멤버가 해당 상태를 가진 스터디 목록들을 반환합니다.
    *
    * @param memberId 검색할 대상이 되는 멤버의 PK
