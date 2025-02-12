@@ -49,4 +49,7 @@ public class StudyMember {
   public void cancel() {
     this.studyMemberStatus = StudyMemberStatus.CANCELED;
   }
+  public void accept() {
+    this.studyMemberStatus = StudyMemberStatus.PARTICIPANT;
+  }
 }

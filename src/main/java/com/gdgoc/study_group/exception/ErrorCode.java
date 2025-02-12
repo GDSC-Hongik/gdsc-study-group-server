@@ -17,6 +17,7 @@ public enum ErrorCode {
   APPLY_NO_QUESTION(HttpStatus.BAD_REQUEST, "질문이 존재하지 않으나, 답변이 존재합니다."),
   APPLY_TOO_MANY(HttpStatus.BAD_REQUEST, "스터디당 지원은 하나만 등록가능합니다."),
   APPLY_NO_MEMBER(HttpStatus.BAD_REQUEST, "해당하는 지원 기록이 없습니다."),
+  APPLY_CAN_NOT_CANCELED(HttpStatus.BAD_REQUEST, "지원 대기일 때, 취소가능합니다"),
 
   // member
   MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),

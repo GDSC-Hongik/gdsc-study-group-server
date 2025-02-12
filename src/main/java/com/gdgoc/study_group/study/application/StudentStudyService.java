@@ -1,5 +1,6 @@
 package com.gdgoc.study_group.study.application;
 
+import static com.gdgoc.study_group.exception.ErrorCode.APPLY_CAN_NOT_CANCELED;
 import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_MEMBER;
 import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_QUESTION;
 import static com.gdgoc.study_group.exception.ErrorCode.APPLY_TOO_MANY;
@@ -166,8 +167,7 @@ public class StudentStudyService {
    */
   @Transactional(readOnly = false)
   public void cancelApply(Long studyId, Long memberId) throws CustomException {
-    Study study = studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
-    List<StudyMember> studyMembers = studyRepository.findStudyMembersWithStatus(studyId, StudyMemberStatus.WAITING);
+    List<StudyMember> studyMembers = studyRepository.findMemberInfo(studyId, memberId);
 
     // validate
     if(studyMembers.isEmpty()) {
@@ -176,8 +176,11 @@ public class StudentStudyService {
     if(studyMembers.size() > 1) {
       throw new CustomException(APPLY_TOO_MANY);
     }
+    StudyMember studyMember = studyMembers.get(0);
+    if(studyMember.getStudyMemberStatus() != StudyMemberStatus.WAITING) {
+      throw new CustomException(APPLY_CAN_NOT_CANCELED);
+    }
 
-    studyMembers.get(0).cancel();
-    studyRepository.save(study);
+    studyMember.cancel();
   }
 }

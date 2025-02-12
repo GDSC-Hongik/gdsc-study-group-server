@@ -6,8 +6,11 @@ import static com.gdgoc.study_group.exception.ErrorCode.LEADER_NO_RIGHT;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
 
 import com.gdgoc.study_group.exception.CustomException;
+import com.gdgoc.study_group.member.dao.MemberRepository;
+import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
+import com.gdgoc.study_group.study.dto.ParticipantStatusRequest;
 import com.gdgoc.study_group.study.dto.StudyCreateUpdateRequest;
 import com.gdgoc.study_group.study.dto.StudyParticipantResponse;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
@@ -26,6 +29,7 @@ public class LeaderStudyService {
   // TODO: 스터디장 권한 확인 필요
 
   public final StudyRepository studyRepository;
+  private final MemberRepository memberRepository;
 
   /**
    * 스터디 정보를 수정합니다.
@@ -93,17 +97,58 @@ public class LeaderStudyService {
   @Transactional(readOnly = false)
   public void participantWithdraw(Long studyId, Long participantId) throws CustomException {
     List<StudyMember> memberInfo = studyRepository.findMemberInfo(studyId, participantId);
-    if(memberInfo.isEmpty()) {
-      throw new CustomException(APPLY_NO_MEMBER);
-    }
-    if(memberInfo.size() > 1) {
-      throw new CustomException(APPLY_TOO_MANY);
-    }
+    validateMemberInfo(memberInfo);
+
     StudyMember member = memberInfo.get(0);
     if(member.getStudyMemberStatus() != StudyMemberStatus.PARTICIPANT) {
       throw new CustomException(LEADER_NO_RIGHT);
     }
 
     member.cancel();
+  }
+
+  /**
+   * 멤버의 스터디 수강에 대한 정보를 수정합니다
+   * @param studyId 해당하는 스터디 id
+   * @param request 해당하는 멤버의 정보
+   * @param newStatus 수정할 상태
+   * @throws CustomException <br>
+   * 해당하는 정보가 없다면, {@code APPLY_NO_MEMBER} 를, <br>
+   * 1개를 초과한다면, {@code APPLY_TOO_MANY} 를 반환합니다 <br>
+   * 아래의 상태 변화가 아니라면, {@code LEADER_NO_RIGHT} 를 반환합니다 <br>
+   * 바꾸려는 멤버가 신청대기나 참여자가 아닌 경우, <br>
+   * 바꾸는 상태,({@code newStatus} 가 {@code CANCELED}, {@code PARTICIPANT} 둘 중 하나가 아닌 경우
+   */
+  @Transactional(readOnly = false)
+  public void changeMemberStatus(Long studyId, ParticipantStatusRequest request) throws CustomException {
+    Member member = memberRepository.findMember(request.name(), request.studentNumber(), request.github());
+    List<StudyMember> memberInfo = studyRepository.findMemberInfo(studyId, member.getId());
+    validateMemberInfo(memberInfo);
+
+    StudyMember sm = memberInfo.get(0);
+    if(!(sm.getStudyMemberStatus() == StudyMemberStatus.PARTICIPANT ||
+            sm.getStudyMemberStatus() == StudyMemberStatus.WAITING)) {
+      throw new CustomException(LEADER_NO_RIGHT);
+    }
+
+    if(request.status() == StudyMemberStatus.CANCELED) {
+      sm.cancel();
+      return;
+    }
+    if(request.status() == StudyMemberStatus.PARTICIPANT) {
+      sm.accept();
+      return;
+    }
+    throw new CustomException(LEADER_NO_RIGHT);
+  }
+
+  //============= utils =============//
+  private void validateMemberInfo(List<StudyMember> memberInfo) throws CustomException {
+    if(memberInfo.isEmpty()) {
+      throw new CustomException(APPLY_NO_MEMBER);
+    }
+    if(memberInfo.size() > 1) {
+      throw new CustomException(APPLY_TOO_MANY);
+    }
   }
 }

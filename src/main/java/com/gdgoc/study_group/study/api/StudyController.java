@@ -95,10 +95,17 @@ public class StudyController {
     return ResponseEntity.status(HttpStatus.OK).body(leaderStudyService.findAppliedMember(studyId));
   }
 
-  @DeleteMapping("/{studyId}/participants/{userId}")
+  @DeleteMapping("/{studyId}/participants/{memberId}")
   public ResponseEntity<Void> deleteParticipants(@PathVariable("studyId") Long studyId,
-                                                 @PathVariable("userId") Long userId) {
-    leaderStudyService.participantWithdraw(studyId, userId);
+                                                 @PathVariable("memberId") Long memberId) {
+    leaderStudyService.participantWithdraw(studyId, memberId);
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
+  @PatchMapping("/{studyId}/applications")
+  public ResponseEntity<Void> participantChangeStatus(@PathVariable("studyId") Long studyId,
+                                                      @RequestBody ParticipantStatusRequest request) {
+    leaderStudyService.changeMemberStatus(studyId, request);
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 }
