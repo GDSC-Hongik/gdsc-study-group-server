@@ -111,7 +111,6 @@ public class LeaderStudyService {
    * 멤버의 스터디 수강에 대한 정보를 수정합니다
    * @param studyId 해당하는 스터디 id
    * @param request 해당하는 멤버의 정보
-   * @param newStatus 수정할 상태
    * @throws CustomException <br>
    * 해당하는 정보가 없다면, {@code APPLY_NO_MEMBER} 를, <br>
    * 1개를 초과한다면, {@code APPLY_TOO_MANY} 를 반환합니다 <br>
