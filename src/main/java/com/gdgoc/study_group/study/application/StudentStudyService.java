@@ -4,6 +4,7 @@ import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_MEMBER;
 import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_QUESTION;
 import static com.gdgoc.study_group.exception.ErrorCode.APPLY_TOO_MANY;
 import static com.gdgoc.study_group.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.gdgoc.study_group.exception.ErrorCode.STUDY_LEADER_ERROR;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
 
 import com.gdgoc.study_group.exception.CustomException;
@@ -15,6 +16,7 @@ import com.gdgoc.study_group.study.dto.*;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
 import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +90,30 @@ public class StudentStudyService {
     Study study =
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     return StudyResponse.from(study);
+  }
+
+  /**
+   * 스터디 참여자를 조회합니다
+   * @param studyId
+   * @return 참여자 배열을 반환합니다
+   * @throws CustomException <br>
+   * {@code STUDY_NOT_FOUND}: 해당하는 스터디가 없습니다
+   * {@code STUDY_LEADER_ERROR}: 스터디 리더가 1명이 아닙니다
+   */
+  public List<StudyParticipantResponse> findParticipants(Long studyId) throws CustomException {
+    studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+
+    List<StudyMember> participants = studyRepository.findStudyMembersWithStatus(studyId,
+            StudyMemberStatus.PARTICIPANT);
+    List<StudyMember> leader = studyRepository.findStudyMembersWithStatus(studyId,
+            StudyMemberStatus.LEADER);
+    if(leader.size() != 1) {
+      throw new CustomException(STUDY_LEADER_ERROR);
+    }
+
+    return Stream.concat(participants.stream(), leader.stream())
+            .map(StudyParticipantResponse::from)
+            .toList();
   }
 
   //============== apply ==============//

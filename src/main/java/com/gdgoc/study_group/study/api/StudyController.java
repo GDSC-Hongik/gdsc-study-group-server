@@ -80,6 +80,12 @@ public class StudyController {
     return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
   }
 
+  @Operation(summary = "스터디 참여자 확인", description = "스터디 참여자를 확인합니다.")
+  @GetMapping("/{studyId}/participants")
+  public ResponseEntity<List<StudyParticipantResponse>> getStudyParticipants(@PathVariable("studyId") Long studyId) {
+    return ResponseEntity.status(HttpStatus.OK).body(studentStudyService.findParticipants(studyId));
+  }
+
   //================== leader Only ==================//
   // TODO: auth 를 통해 leader 임을 확인해야함
 

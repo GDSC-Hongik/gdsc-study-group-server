@@ -11,6 +11,7 @@ public enum ErrorCode {
 
   // study
   STUDY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 스터디입니다."),
+  STUDY_LEADER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "스터디 리더는 1명이어야 합니다"),
 
   // apply
   APPLY_NO_QUESTION(HttpStatus.BAD_REQUEST, "질문이 존재하지 않으나, 답변이 존재합니다."),
