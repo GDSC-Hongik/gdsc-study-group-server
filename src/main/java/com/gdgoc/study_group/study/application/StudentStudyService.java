@@ -177,7 +177,7 @@ public class StudentStudyService {
       throw new CustomException(APPLY_TOO_MANY);
     }
 
-    studyMembers.get(0).cancelApply();
+    studyMembers.get(0).cancel();
     studyRepository.save(study);
   }
 }
