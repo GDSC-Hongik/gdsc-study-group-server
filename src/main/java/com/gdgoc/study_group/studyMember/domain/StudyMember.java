@@ -46,7 +46,7 @@ public class StudyMember {
   }
 
   //============== apply ==============//
-  public void cancelApply() {
+  public void cancel() {
     this.studyMemberStatus = StudyMemberStatus.CANCELED;
   }
 }

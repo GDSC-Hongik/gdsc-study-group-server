@@ -1,5 +1,8 @@
 package com.gdgoc.study_group.study.application;
 
+import static com.gdgoc.study_group.exception.ErrorCode.APPLY_NO_MEMBER;
+import static com.gdgoc.study_group.exception.ErrorCode.APPLY_TOO_MANY;
+import static com.gdgoc.study_group.exception.ErrorCode.LEADER_NO_RIGHT;
 import static com.gdgoc.study_group.exception.ErrorCode.STUDY_NOT_FOUND;
 
 import com.gdgoc.study_group.exception.CustomException;
@@ -75,5 +78,32 @@ public class LeaderStudyService {
     return studyRepository.findStudyMembersWithStatus(studyId, StudyMemberStatus.WAITING).stream()
             .map(StudyParticipantResponse::from)
             .toList();
+  }
+
+  /**
+   * 참가자를 탈퇴처리합니다
+   * 내부적으로는 CANCEL 상태로 변경 후 저장합니다
+   * @param studyId 해당 스터디의 id
+   * @param participantId 해당 참가자의 id
+   * @throws CustomException <br>
+   * 해당하는 정보가 없다면, {@code APPLY_NO_MEMBER} 를, <br>
+   * 1개를 초과한다면, {@code APPLY_TOO_MANY} 를 반환합니다 <br>
+   * 참가자가 아닌 멤버를 취소 처리하려고 하면, {@code LEADER_NO_RIGHT} 를 반환합니다
+   */
+  @Transactional(readOnly = false)
+  public void participantWithdraw(Long studyId, Long participantId) throws CustomException {
+    List<StudyMember> memberInfo = studyRepository.findMemberInfo(studyId, participantId);
+    if(memberInfo.isEmpty()) {
+      throw new CustomException(APPLY_NO_MEMBER);
+    }
+    if(memberInfo.size() > 1) {
+      throw new CustomException(APPLY_TOO_MANY);
+    }
+    StudyMember member = memberInfo.get(0);
+    if(member.getStudyMemberStatus() != StudyMemberStatus.PARTICIPANT) {
+      throw new CustomException(LEADER_NO_RIGHT);
+    }
+
+    member.cancel();
   }
 }

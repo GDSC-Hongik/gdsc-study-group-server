@@ -94,4 +94,11 @@ public class StudyController {
   public ResponseEntity<List<StudyParticipantResponse>> studyParticipant(@PathVariable("studyId") Long studyId) {
     return ResponseEntity.status(HttpStatus.OK).body(leaderStudyService.findAppliedMember(studyId));
   }
+
+  @DeleteMapping("/{studyId}/participants/{userId}")
+  public ResponseEntity<Void> deleteParticipants(@PathVariable("studyId") Long studyId,
+                                                 @PathVariable("userId") Long userId) {
+    leaderStudyService.participantWithdraw(studyId, userId);
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
 }

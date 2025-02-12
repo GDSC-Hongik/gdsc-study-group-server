@@ -19,7 +19,10 @@ public enum ErrorCode {
   APPLY_NO_MEMBER(HttpStatus.BAD_REQUEST, "해당하는 지원 기록이 없습니다."),
 
   // member
-  MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다.")
+  MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+
+  // leader
+  LEADER_NO_RIGHT(HttpStatus.BAD_REQUEST, "권한이 없습니다.")
   ;
 
   private final HttpStatus status;
