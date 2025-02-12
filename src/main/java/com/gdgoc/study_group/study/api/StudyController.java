@@ -59,9 +59,9 @@ public class StudyController {
     return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
   }
 
-  // ****************** 스터디 지원 관련 ****************** //
+  //================== 스터디 지원 관련 ==================//
   @Operation(summary = "스터디 지원", description = "스터디에 지원합니다. 스터디 질문이 존재해야만 합니다.")
-  @PostMapping("/{studyId}/application")
+  @PostMapping("/{studyId}/applications")
   public ResponseEntity<Void> applyStudy(@PathVariable("studyId") Long studyId, @RequestBody ApplicationRequest request) {
     // TODO: auth 에서 member id 구하기
     Long memberId = 777L;
@@ -71,12 +71,21 @@ public class StudyController {
   }
 
   @Operation(summary = "스터디 지원 취소", description = "스터디 지원을 취소합니다")
-  @DeleteMapping("/{studyId}/application")
+  @DeleteMapping("/{studyId}/applications")
   public ResponseEntity<Void> applyCancel(@PathVariable("studyId") Long studyId) {
     // TODO: auth 에서 member id 구하기
     Long memberId = 777L;
 
     studentStudyService.cancelApply(studyId, memberId);
     return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
+  }
+
+  //================== leader Only ==================//
+  // TODO: auth 를 통해 leader 임을 확인해야함
+
+  @Operation(summary = "스터디 지원자 확인", description = "스터디 지원자를 확인합니다. 리더 이상의 자격이 필요합니다")
+  @GetMapping("/{studyId}/applications")
+  public ResponseEntity<List<StudyParticipantResponse>> studyParticipant(@PathVariable("studyId") Long studyId) {
+    return ResponseEntity.status(HttpStatus.OK).body(leaderStudyService.findAppliedMember(studyId));
   }
 }

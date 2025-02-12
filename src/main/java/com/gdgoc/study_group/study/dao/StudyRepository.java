@@ -5,6 +5,7 @@ import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.domain.StudyStatus;
 import com.gdgoc.study_group.studyMember.domain.StudyMember;
+import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -67,8 +68,10 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
    * @param studyId 검색할 스터디의 id
    * @return 해당 스터디의 답변들을 반환
    */
-  @Query("SELECT sm FROM StudyMember sm WHERE sm.study.id = :studyId")
-  List<StudyMember> findStudyMembers(@Param("studyId") Long studyId);
+  @Query("SELECT sm FROM StudyMember sm WHERE sm.study.id = :studyId AND "
+          + "sm.studyMemberStatus = :studyMemberStatus")
+  List<StudyMember> findStudyMembersWithStatus(@Param("studyId") Long studyId,
+                                               @Param("studyMemberStatus") StudyMemberStatus studyMemberStatus);
 
   /**
    * 특정 멤버의 스터디에 대한 정보를 반환합니다

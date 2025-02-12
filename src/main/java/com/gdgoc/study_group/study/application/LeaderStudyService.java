@@ -6,6 +6,11 @@ import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.study.dao.StudyRepository;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.dto.StudyCreateUpdateRequest;
+import com.gdgoc.study_group.study.dto.StudyParticipantResponse;
+import com.gdgoc.study_group.studyMember.domain.StudyMember;
+import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,5 +60,20 @@ public class LeaderStudyService {
     Study study =
         studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
     studyRepository.delete(study);
+  }
+
+  /**
+   * 스터디 지원자 전체를 조회합니다
+   * @param studyId 조회할 스터디 id
+   * @return 지원자 전체의 정보를 반환합니다
+   * @see StudyParticipantResponse
+   * @throws CustomException {@code STUDY_NOT_FOUND}: 해당하는 스터디가 없습니다
+   */
+  public List<StudyParticipantResponse> findAppliedMember(Long studyId) throws CustomException {
+    studyRepository.findById(studyId).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+
+    return studyRepository.findStudyMembersWithStatus(studyId, StudyMemberStatus.WAITING).stream()
+            .map(StudyParticipantResponse::from)
+            .toList();
   }
 }
