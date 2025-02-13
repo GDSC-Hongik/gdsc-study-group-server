@@ -22,7 +22,7 @@ public class MemberService {
    * @param request 새로 만들 멤버 정보
    * @return Member 형태로 반환
    */
-  @Transactional
+  @Transactional(readOnly = false)
   public Member createMember(MemberRequestDto request) {
 
     Member newMember =
@@ -53,7 +53,7 @@ public class MemberService {
    * @param memberId 멤버를 조회할 정보
    * @param request 수정할 정보
    */
-  @Transactional
+  @Transactional(readOnly = false)
   public void updateMember(Long memberId, MemberRequestDto request) {
 
     Member member = getMember(memberId);
