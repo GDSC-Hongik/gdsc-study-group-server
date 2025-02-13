@@ -74,7 +74,8 @@ public class SecurityConfig {
                         .requestMatchers( "/auth/signup", "/auth/login","/", "/auth/reissue").permitAll()
                         .requestMatchers("/auth/logout").authenticated()
                         .requestMatchers("/auth").hasRole("ADMIN")
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .logout((logout) -> logout.disable());
 
         // JwtFilter 추가
         http.addFilterBefore(
