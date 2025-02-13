@@ -18,13 +18,15 @@ public class CookieService {
     public String extractCookie(HttpServletRequest request, String cookieType) {
 
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) return null;
 
-        for (Cookie cookie : cookies) {
-            if (cookieType.equals(cookie.getName())) {
-                return cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookieType.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
         }
+
         return null;
     }
 
