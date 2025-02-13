@@ -60,14 +60,22 @@ public class RefreshTokenService {
                 return false;
             }
 
-            jwtUtil.isExpired(refreshToken);
+            Boolean isExpired = jwtUtil.isExpired(refreshToken);
+            if (isExpired) {
+                return false;
+            }
 
             String category = jwtUtil.getCategory(refreshToken);
             if (!"refresh".equals(category)) {
                 return false;
             }
 
-            return refreshRepository.existsByRefresh(refreshToken);
+            Boolean isExists = refreshRepository.existsByRefresh(refreshToken);
+            if (!isExists) {
+                return false;
+            }
+
+            return true;
 
         } catch (ExpiredJwtException e) {
             return false;
