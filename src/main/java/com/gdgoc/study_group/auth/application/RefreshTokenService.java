@@ -81,4 +81,14 @@ public class RefreshTokenService {
             return false;
         }
     }
+
+    /**
+     * 해당 리프레쉬 토큰으로 refresh 테이블에서 관련 정보를 삭제합니다.
+     *
+     * @param refreshToken 삭제될 리프레쉬 토큰
+     */
+    @Transactional(readOnly = false)
+    public void deleteRefresh(String refreshToken) {
+        refreshRepository.deleteByRefresh(refreshToken);
+    }
 }

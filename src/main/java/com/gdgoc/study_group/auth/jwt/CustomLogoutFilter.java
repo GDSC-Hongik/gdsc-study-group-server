@@ -58,10 +58,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         // 검증 완료 -> 로그아웃 진행
-        // 해당 리프레쉬 토큰으로 refresh 테이블에서 관련 정보 삭제
-        refreshRepository.deleteByRefresh(refresh);
+        refreshTokenService.deleteRefresh(refresh);
 
-        // 리프레쉬 토큰의 쿠키 값 비움
+        // 리프레쉬 토큰의 쿠키 값 삭제
         cookieService.createCookie(response, "refresh", null, 0);
 
         response.setStatus(HttpServletResponse.SC_OK);
