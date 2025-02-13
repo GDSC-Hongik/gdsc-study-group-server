@@ -8,7 +8,6 @@ import com.gdgoc.study_group.auth.jwt.CustomLogoutFilter;
 import com.gdgoc.study_group.auth.jwt.JwtFilter;
 import com.gdgoc.study_group.auth.jwt.JwtUtil;
 import com.gdgoc.study_group.auth.jwt.LoginFilter;
-import com.gdgoc.study_group.member.dao.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +42,6 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final CookieService cookieService;
-    private final RefreshTokenService refreshTokenService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -58,7 +56,7 @@ public class SecurityConfig {
      * @return 설정이 완료된 security filter chain 반환
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, MemberRepository memberRepository, RefreshTokenService refreshTokenService) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, RefreshTokenService refreshTokenService) throws Exception {
 
         // jwt는 stateless한 세션이기에 csrf에 대한 공격 방어 딱히 필요 없음
         http
@@ -86,13 +84,13 @@ public class SecurityConfig {
 
         // LoginFilter 추가
         http.addFilterAt(
-                new LoginFilter(objectMapper ,authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenService),
+                new LoginFilter(objectMapper ,authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenService, cookieService),
                 UsernamePasswordAuthenticationFilter.class
         );
 
         // 기존 LogoutFilter 대신 CustomLogoutFilter 실행되도록 추가
         http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository, cookieService, refreshTokenService), LogoutFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(cookieService, refreshTokenService), LogoutFilter.class);
 
         // 세션을 stateless한 상태로 진행하기 위함
         http

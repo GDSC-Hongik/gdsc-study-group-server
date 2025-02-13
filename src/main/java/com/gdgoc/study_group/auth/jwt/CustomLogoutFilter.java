@@ -2,7 +2,6 @@ package com.gdgoc.study_group.auth.jwt;
 
 import com.gdgoc.study_group.auth.application.CookieService;
 import com.gdgoc.study_group.auth.application.RefreshTokenService;
-import com.gdgoc.study_group.auth.dao.RefreshRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -17,8 +16,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {
 
-    private final JwtUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
     private final CookieService cookieService;
     private final RefreshTokenService refreshTokenService;
 

@@ -32,12 +32,12 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     private final RefreshTokenService refreshTokenService;
     private final CookieService cookieService;
 
-    public LoginFilter(ObjectMapper objectMapper, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
+    public LoginFilter(ObjectMapper objectMapper, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, CookieService cookieService) {
         super(LOGIN_URL, authenticationManager);
         this.objectMapper = objectMapper;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
-        this.cookieService = new CookieService();
+        this.cookieService = cookieService;
     }
 
     /**
