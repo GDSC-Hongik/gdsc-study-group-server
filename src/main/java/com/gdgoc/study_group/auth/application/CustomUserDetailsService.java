@@ -16,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final AuthRepository authRepository;
 
     /**
-     * 학번으로 회원을 조회하여 반환합니다.
+     * 데이터베이스에서 학번으로 회원을 조회하여 반환합니다.
      * @param studentNumber 조회할 대상 정보
      * @return 조회된 회원 정보를 UserDetails 형식으로 반환
      */

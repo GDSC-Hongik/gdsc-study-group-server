@@ -20,7 +20,7 @@ public class ReissueService {
         // 요청에서 refresh 쿠키를 추출하는 메서드 호출
         String refresh = cookieService.extractCookie(request, "refresh");
 
-        // refresh 토큰 검증
+        // refresh 토큰을 검증하는 메서드 호출
         if (!refreshTokenService.validateRefresh(refresh)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
