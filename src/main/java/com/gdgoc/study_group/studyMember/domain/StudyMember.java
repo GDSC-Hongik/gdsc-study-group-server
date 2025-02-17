@@ -3,10 +3,7 @@ package com.gdgoc.study_group.studyMember.domain;
 import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.study.domain.Study;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -35,7 +32,4 @@ public class StudyMember {
     this.studyMemberStatus = studyMemberStatus;
   }
 
-  public void updateStatus(StudyMemberStatus status) {
-    this.studyMemberStatus = status;
-  }
 }
