@@ -3,13 +3,7 @@ package com.gdgoc.study_group.round.domain;
 import com.gdgoc.study_group.comment.domain.Comment;
 import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import com.gdgoc.study_group.study.domain.Study;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -43,17 +37,22 @@ public class Round {
   private String studyDetail; // 학습 내용
   private LocalDate roundDate; // 회차 진행한 날짜
 
+  @Enumerated(EnumType.STRING)
+  private RoundStatus roundStatus; // 회차 상태 (ONLINE, OFFLINE)
+
   @Builder
-  public Round(Study study, String goal, String studyDetail, LocalDate roundDate) {
+  public Round(Study study, String goal, String studyDetail, LocalDate roundDate, RoundStatus roundStatus) {
     this.study = study;
     this.goal = goal;
     this.studyDetail = studyDetail;
     this.roundDate = roundDate;
+    this.roundStatus = roundStatus;
   }
 
-  public void updateDetails(String goal, String studyDetail, LocalDate roundDate) {
+  public void updateDetails(String goal, String studyDetail, LocalDate roundDate, RoundStatus roundStatus) {
     this.goal = goal;
     this.studyDetail = studyDetail;
     this.roundDate = roundDate;
+    this.roundStatus = roundStatus;
   }
 }

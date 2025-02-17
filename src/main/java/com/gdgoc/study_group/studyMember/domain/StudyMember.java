@@ -2,17 +2,12 @@ package com.gdgoc.study_group.studyMember.domain;
 
 import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.study.domain.Study;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "STUDY_MEMBER")
 public class StudyMember {
   @Id
@@ -29,4 +24,12 @@ public class StudyMember {
 
   @Enumerated(EnumType.STRING)
   private StudyMemberStatus studyMemberStatus;
+
+  @Builder
+  public StudyMember(Member member, Study study, StudyMemberStatus studyMemberStatus) {
+    this.member = member;
+    this.study = study;
+    this.studyMemberStatus = studyMemberStatus;
+  }
+
 }
