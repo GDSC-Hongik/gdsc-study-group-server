@@ -20,7 +20,6 @@ public class MemberInfoService {
 
         String studentNumber = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        System.out.println(memberRepository.findByStudentNumber(studentNumber));
         return memberRepository.findByStudentNumber(studentNumber).getId();
     }
 }
