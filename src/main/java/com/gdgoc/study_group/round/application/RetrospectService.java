@@ -31,21 +31,20 @@ public class RetrospectService {
      * @param request 멤버 아이디와 회고 내용
      */
     @Transactional(readOnly = false)
-    public Long createRetrospect(Long roundId, Long memberId, RetrospectRequest request) throws CustomException {
+    public Long createRetrospect(Long roundId, Long memberId, RetrospectRequest request) {
 
-        Round round = roundRepository.findById(roundId)
+        roundRepository.findById(roundId)
                 .orElseThrow(() -> new CustomException(ROUND_NOT_FOUND));
-        Member member = memberRepository.findById(memberId)
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         if (roundRepository.findRoundMember(roundId, memberId).isPresent()) {
             throw new CustomException(RETROSPECT_ALREADY_EXIST);
         }
 
-        RoundMember roundMember = RoundMember.create(round, member, request.retrospect());
-        roundRepository.saveRoundMember(roundMember);
+        roundRepository.saveRoundMember(roundId, memberId, request.retrospect());
 
-        return roundMember.getId();
+        return roundRepository.findRoundMember(roundId, memberId).get().getId();
     }
 
 
@@ -63,7 +62,7 @@ public class RetrospectService {
         validateRetrospectOwner(roundMember, memberId);
 
         roundMember.update(request.retrospect());
-        roundRepository.saveRoundMember(roundMember);
+        roundRepository.saveRoundMember(roundId, memberId, request.retrospect());
 
         return roundMember.getId();
     }

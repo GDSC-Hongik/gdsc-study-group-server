@@ -1,6 +1,7 @@
 package com.gdgoc.study_group.round.dao;
 
 import com.gdgoc.study_group.comment.domain.Comment;
+import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoundRepository extends JpaRepository<Round, Long>, RoundCustomRepository {
+public interface RoundRepository extends JpaRepository<Round, Long> {
   // ================ ROUND ================ //
   /**
    * 특정 스터디의 모든 회차를 조회합니다
@@ -60,6 +61,10 @@ public interface RoundRepository extends JpaRepository<Round, Long>, RoundCustom
 
   @Query("SELECT rm FROM RoundMember rm WHERE rm.round.id = :roundId")
   List<RoundMember> findRoundMemberByRoundId(@Param("roundId") Long roundId);
+
+  @Modifying
+  @Query(value = "INSERT INTO ROUND_MEMBER (round_id, member_id, retrospect) VALUES (:roundId, :memberId, :retrospect)", nativeQuery = true)
+  void saveRoundMember(@Param("roundId") Long roundId, @Param("memberId") Long memberId, @Param("retrospect") String retrospect);
 
   @Modifying
   @Query("DELETE FROM RoundMember rm WHERE rm.id = :roundMemberId")
