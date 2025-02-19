@@ -28,16 +28,18 @@ public class RetrospectController {
             @Parameter(description = "현재 인증된 사용자 정보", hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody RetrospectRequest request) {
 
+        retrospectService.createRetrospect(roundId, userDetails.getUsername(), request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "회고 수정", description = "작성한 회고를 수정합니다.")
     @PatchMapping
-    public ResponseEntity<Void> updateRetrospect(
+    public ResponseEntity<Map<String, Long>> updateRetrospect(
             @Parameter(description = "회차 ID" ,required = true) @PathVariable Long roundId,
             @Parameter(description = "현재 인증된 사용자 정보", hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody RetrospectRequest request) {
 
+        retrospectService.updateRetrospect(roundId, userDetails.getUsername(), request);
         return ResponseEntity.ok().build();
     }
 

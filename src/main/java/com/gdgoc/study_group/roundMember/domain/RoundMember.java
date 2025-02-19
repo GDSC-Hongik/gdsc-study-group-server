@@ -32,17 +32,6 @@ public class RoundMember {
 
   private String retrospect; // 후기 내용
 
-  public static RoundMember create(
-          Round round,
-          Member member,
-          String retrospect) {
-    return RoundMember.builder()
-            .round(round)
-            .member(member)
-            .retrospect(retrospect)
-            .build();
-  }
-
   public void updateRetrospect(String retrospect) {
     this.retrospect = retrospect;
   }

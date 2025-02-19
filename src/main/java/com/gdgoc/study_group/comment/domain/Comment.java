@@ -2,7 +2,6 @@ package com.gdgoc.study_group.comment.domain;
 
 import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
-import com.gdgoc.study_group.round.dto.CommentDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +13,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 public class Comment {
   @Id
@@ -31,18 +30,7 @@ public class Comment {
 
   private String comment;
 
-  public static Comment create(
-          Round round,
-          Member member,
-          String comment) {
-    return Comment.builder()
-            .round(round)
-            .member(member)
-            .comment(comment)
-            .build();
-  }
-
-  public void update(CommentDTO comment) {
-    this.comment = comment.comment();
+  public void update(String comment) {
+    this.comment = comment;
   }
 }
