@@ -61,7 +61,7 @@ public class RetrospectService {
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
         validateRetrospectOwner(roundMember, memberId);
 
-        roundMember.update(request.retrospect());
+        roundMember.updateRetrospect(request.retrospect());
         roundRepository.saveRoundMember(roundId, memberId, request.retrospect());
 
         return roundMember.getId();
