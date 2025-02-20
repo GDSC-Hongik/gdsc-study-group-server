@@ -69,4 +69,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
       @Param("memberId") Long memberId, @Param("studyId") Long studyId);
 
   Member findByGithub(String github);
+  Member findByStudentNumber(String studentNumber);
 }
