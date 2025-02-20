@@ -8,8 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.*;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@Builder
 public class Comment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +29,8 @@ public class Comment {
   private Member member;
 
   private String comment;
+
+  public void update(String comment) {
+    this.comment = comment;
+  }
 }

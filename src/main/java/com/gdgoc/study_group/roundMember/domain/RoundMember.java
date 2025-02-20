@@ -9,8 +9,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "ROUND_MEMBER")
 public class RoundMember {
   @Id
@@ -26,4 +31,8 @@ public class RoundMember {
   private Member member;
 
   private String retrospect; // 후기 내용
+
+  public void updateRetrospect(String retrospect) {
+    this.retrospect = retrospect;
+  }
 }
