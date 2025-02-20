@@ -1,10 +1,11 @@
 package com.gdgoc.study_group.study.dao;
 
-import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.curriculum.domain.Curriculum;
 import com.gdgoc.study_group.day.domain.Day;
 import com.gdgoc.study_group.study.domain.Study;
 import com.gdgoc.study_group.study.domain.StudyStatus;
+import com.gdgoc.study_group.studyMember.domain.StudyMember;
+import com.gdgoc.study_group.studyMember.domain.StudyMemberStatus;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -60,13 +61,26 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
   @Query(value = "SELECT d FROM Day d WHERE d.study.id = :studyId")
   List<Day> getStudyDay(@Param("studyId") Long studyId);
 
-  // ================ ANSWER ================ //
+  // ================ STUDY_MEMBER ================ //
   /**
-   * 해당 스터디의 모든 답변을 조회합니다
+   * 해당 스터디의 멤버를 조회합니다
    *
    * @param studyId 검색할 스터디의 id
    * @return 해당 스터디의 답변들을 반환
    */
-  @Query("SELECT a FROM Answer a WHERE a.study.id = :studyId")
-  List<Answer> findAnswers(@Param("studyId") Long studyId);
+  @Query("SELECT sm FROM StudyMember sm WHERE sm.study.id = :studyId AND "
+          + "sm.studyMemberStatus = :studyMemberStatus")
+  List<StudyMember> findStudyMembersWithStatus(@Param("studyId") Long studyId,
+                                               @Param("studyMemberStatus") StudyMemberStatus studyMemberStatus);
+
+  /**
+   * 특정 멤버의 스터디에 대한 정보를 반환합니다
+   * 일반적으로 1개이하여야 합니다
+   * @param studyId
+   * @param memberId
+   * @return 해당하는 정보를 반환합니다. 일반적으로 1개이하입니다
+   */
+  @Query("SELECT sm FROM StudyMember sm WHERE sm.study.id = :studyId AND "
+          + "sm.member.id = :memberId")
+  List<StudyMember> findMemberInfo(@Param("studyId") Long studyId, @Param("memberId") Long memberId);
 }

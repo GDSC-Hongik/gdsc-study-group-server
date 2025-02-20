@@ -1,6 +1,5 @@
 package com.gdgoc.study_group.study.domain;
 
-import com.gdgoc.study_group.answer.domain.Answer;
 import com.gdgoc.study_group.curriculum.domain.Curriculum;
 import com.gdgoc.study_group.curriculum.dto.CurriculumDTO;
 import com.gdgoc.study_group.day.domain.Day;
@@ -22,7 +21,7 @@ public class Study {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToMany(mappedBy = "study", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<StudyMember> studyMembers = new ArrayList<>();
 
   @OneToMany(mappedBy = "study")
@@ -34,9 +33,6 @@ public class Study {
   @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Day> days = new ArrayList<>();
 
-  @OneToMany(mappedBy = "study")
-  private List<Answer> answers = new ArrayList<>();
-
   @Enumerated(EnumType.STRING)
   private StudyStatus studyStatus;
 
@@ -47,22 +43,8 @@ public class Study {
   private Integer maxParticipants; // null == 인원 제한 X
   private Boolean isApplicationClosed = false; // 멤버 지원 종료 여부(기본값은 지원 가능)
 
-  public static Study create(
-      String name,
-      String description,
-      String requirement,
-      String question,
-      Integer maxParticipants,
-      StudyStatus status) {
-    return Study.builder()
-        .name(name)
-        .description(description)
-        .requirement(requirement)
-        .question(question)
-        .maxParticipants(maxParticipants)
-        .studyStatus(status)
-        .isApplicationClosed(false)
-        .build();
+  public void addStudyMember(StudyMember studyMember) {
+    studyMembers.add(studyMember);
   }
 
   public void addInfo(List<CurriculumDTO> curriculumDTOs, List<DayDTO> dayDTOs) {
