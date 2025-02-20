@@ -1,6 +1,5 @@
 package com.gdgoc.study_group.round.api;
 
-import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.round.application.RetrospectService;
 import com.gdgoc.study_group.round.dto.RetrospectRequest;
 import io.swagger.v3.oas.annotations.Operation;

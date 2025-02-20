@@ -3,8 +3,6 @@ package com.gdgoc.study_group.round.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record RetrospectResponse(
         @Schema(description = "회고를 입력할 멤버의 아이디") @JsonProperty("member_id") Long memberId,

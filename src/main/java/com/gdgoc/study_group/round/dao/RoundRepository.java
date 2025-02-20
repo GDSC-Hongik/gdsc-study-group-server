@@ -1,7 +1,5 @@
 package com.gdgoc.study_group.round.dao;
 
-import com.gdgoc.study_group.comment.domain.Comment;
-import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.domain.Round;
 
 import java.time.LocalDate;

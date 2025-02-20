@@ -1,6 +1,5 @@
 package com.gdgoc.study_group.comment.dto;
 
-import com.gdgoc.study_group.comment.domain.Comment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 

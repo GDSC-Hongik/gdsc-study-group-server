@@ -2,9 +2,7 @@ package com.gdgoc.study_group.round.application;
 
 import com.gdgoc.study_group.exception.CustomException;
 import com.gdgoc.study_group.member.dao.MemberRepository;
-import com.gdgoc.study_group.member.domain.Member;
 import com.gdgoc.study_group.round.dao.RoundRepository;
-import com.gdgoc.study_group.round.domain.Round;
 import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import com.gdgoc.study_group.round.dto.RetrospectRequest;
 import com.gdgoc.study_group.round.dto.RetrospectResponse;
@@ -53,14 +51,12 @@ public class RetrospectService {
      * @param request 멤버의 아이디, 수정할 회고의 내용
      */
     @Transactional(readOnly = false)
-    public void updateRetrospect(Long roundId, Long memberId, RetrospectRequest request) throws CustomException {
+    public void updateRetrospect(Long roundId, Long memberId, RetrospectRequest request) {
 
         RoundMember roundMember = roundRepository.findRoundMember(roundId, memberId)
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
-        validateRetrospectOwner(roundMember, memberId);
 
         roundMember.updateRetrospect(request.retrospect());
-        roundRepository.saveRoundMember(roundId, memberId, request.retrospect());
     }
 
 
@@ -70,11 +66,10 @@ public class RetrospectService {
      * @param roundId 수정할 회고의 회차 ID
      */
     @Transactional(readOnly = false)
-    public void deleteRetrospect(Long roundId, Long memberId) throws CustomException {
+    public void deleteRetrospect(Long roundId, Long memberId) {
 
         RoundMember roundMember = roundRepository.findRoundMember(roundId, memberId)
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
-        validateRetrospectOwner(roundMember, memberId);
 
         roundRepository.deleteRoundMemberById(roundMember.getId());
     }
@@ -86,7 +81,7 @@ public class RetrospectService {
      * @param roundId 조회할 회고의 라운드 ID
      * @return 해당 회고를 작성한 멤버의 아이디와 회고 내용
      */
-    public RetrospectResponse getRetrospect(Long roundId, Long memberId) throws CustomException {
+    public RetrospectResponse getRetrospect(Long roundId, Long memberId) {
 
         RoundMember roundMember = roundRepository.findRoundMember(roundId, memberId)
                 .orElseThrow(() -> new CustomException(RETROSPECT_NOT_FOUND));
@@ -104,13 +99,6 @@ public class RetrospectService {
     public List<RetrospectResponse> getAllRetrospects(Long roundId) {
 
         return roundRepository.findRoundMemberByRoundId(roundId).stream().map(RetrospectResponse::from).toList();
-    }
-
-    //==========HELPER==========//
-    private void validateRetrospectOwner(RoundMember roundMember, Long memberId) {
-        if (!roundMember.getMember().getId().equals(memberId)) {
-            throw new CustomException(FORBIDDEN);
-        }
     }
 }
 

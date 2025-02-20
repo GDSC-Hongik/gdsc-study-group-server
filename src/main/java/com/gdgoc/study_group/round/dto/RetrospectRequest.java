@@ -1,6 +1,5 @@
 package com.gdgoc.study_group.round.dto;
 
-import com.gdgoc.study_group.roundMember.domain.RoundMember;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 

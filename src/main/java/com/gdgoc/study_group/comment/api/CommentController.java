@@ -1,7 +1,6 @@
 package com.gdgoc.study_group.comment.api;
 
 import com.gdgoc.study_group.comment.application.CommentService;
-import com.gdgoc.study_group.comment.domain.Comment;
 import com.gdgoc.study_group.comment.dto.CommentRequest;
 import com.gdgoc.study_group.comment.dto.CommentResponse;
 import com.gdgoc.study_group.round.api.CustomUserDetails;
